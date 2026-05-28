@@ -2,17 +2,15 @@ package com.oliq04.medicalclinic.Service;
 
 import com.oliq04.medicalclinic.Model.Patient;
 import com.oliq04.medicalclinic.Repository.PatientRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PatientService {
-    private final PatientRepository patientRepository;
 
-    public PatientService(PatientRepository patientRepository) {
-        this.patientRepository = patientRepository;
-    }
+    private final PatientRepository patientRepository;
 
     public List<Patient> getPatients() {
         return patientRepository.getPatientList();
@@ -31,20 +29,13 @@ public class PatientService {
         patientRepository.deletePatientByEmail(email);
     }
 
-//    public void modifyPatient(String email, Patient newPatientInfo) {
-//        Patient patient = findPatientByEmail(email);
-//
-//        if (newPatientInfo.getFirstName() != null) {
-//            patient.setFirstName(newPatientInfo.getFirstName());
-//        }
-//
-//        if (newPatientInfo.getLastName() != null) {
-//            patient.setLastName(newPatientInfo.getLastName());
-//        }
-//    }
-
     public void modifyPatient(String email, Patient newPatientInfo) {
         Patient patient = findPatientByEmail(email);
         patient = newPatientInfo;
+    }
+
+    public void editPassword(String email, String password) {
+        Patient patient = findPatientByEmail(email);
+        patient.setPassword(password);
     }
 }

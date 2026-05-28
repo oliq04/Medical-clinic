@@ -1,7 +1,9 @@
 package com.oliq04.medicalclinic.Repository;
 
 import com.oliq04.medicalclinic.Model.Patient;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -9,12 +11,10 @@ import java.util.Optional;
 
 @Getter
 @Repository
+@RequiredArgsConstructor
 public class PatientRepository {
-    private final List<Patient> patientList;
 
-    public PatientRepository(List<Patient> patientList) {
-        this.patientList = patientList;
-    }
+    private final List<Patient> patientList;
 
     public void addPatientToList(Patient patient) {
         patientList.add(patient);

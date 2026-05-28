@@ -1,7 +1,9 @@
 package com.oliq04.medicalclinic.Controller;
 
 import com.oliq04.medicalclinic.Model.Patient;
+import com.oliq04.medicalclinic.Model.UpdatePasswordCommand;
 import com.oliq04.medicalclinic.Service.PatientService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,12 +11,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/patient")
+@RequiredArgsConstructor
 public class PatientController {
     private final PatientService patientService;
-
-    public PatientController(PatientService patientService) {
-        this.patientService = patientService;
-    }
 
     @GetMapping
     public List<Patient> getPatients() {
@@ -32,11 +31,6 @@ public class PatientController {
         patientService.addPatient(patient);
     }
 
-//    @PatchMapping("/{email}")
-//    public void modifyPatient(@PathVariable String email, @RequestBody Patient newPatientInfo) {
-//        patientService.modifyPatient(email, newPatientInfo);
-//    }
-
     @PutMapping("/{email}")
     public void modifyPatientCompletley(@PathVariable String email, @RequestBody Patient newPatientInfo) {
         patientService.modifyPatient(email, newPatientInfo);
@@ -47,4 +41,8 @@ public class PatientController {
         patientService.removePatientByEmail(email);
     }
 
+    @PatchMapping("/{email}/password")
+    public void editPassword(@PathVariable String email, @RequestBody UpdatePasswordCommand command) {
+        patientService.editPassword(email, command.getPassword());
+    }
 }
