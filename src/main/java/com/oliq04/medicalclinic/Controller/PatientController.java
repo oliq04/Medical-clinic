@@ -32,8 +32,8 @@ public class PatientController {
     }
 
     @PutMapping("/{email}")
-    public void modifyPatientCompletley(@PathVariable String email, @RequestBody Patient newPatientInfo) {
-        patientService.modifyPatient(email, newPatientInfo);
+    public Patient modifyPatientCompletley(@PathVariable String email, @RequestBody Patient newPatientInfo) {
+        return patientService.modifyPatient(email, newPatientInfo);
     }
 
     @DeleteMapping("/{email}")

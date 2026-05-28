@@ -29,9 +29,10 @@ public class PatientService {
         patientRepository.deletePatientByEmail(email);
     }
 
-    public void modifyPatient(String email, Patient newPatientInfo) {
+    public Patient modifyPatient(String email, Patient newPatientInfo) {
         Patient patient = findPatientByEmail(email);
         patient = newPatientInfo;
+        return patient;
     }
 
     public Patient editPassword(String email, String password) {
