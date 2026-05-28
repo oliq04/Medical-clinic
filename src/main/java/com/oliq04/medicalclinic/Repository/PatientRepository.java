@@ -1,7 +1,6 @@
 package com.oliq04.medicalclinic.Repository;
 
 import com.oliq04.medicalclinic.Model.Patient;
-import com.oliq04.medicalclinic.Service.PatientService;
 import lombok.Getter;
 import org.springframework.stereotype.Repository;
 

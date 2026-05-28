@@ -1,6 +1,5 @@
 package com.oliq04.medicalclinic.Model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
