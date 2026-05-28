@@ -26,5 +26,4 @@ public class PatientRepository {
     public void deletePatientByEmail(String email) {
         patientList.remove(findPatientByEmail(email).orElseThrow());
     }
-
 }
