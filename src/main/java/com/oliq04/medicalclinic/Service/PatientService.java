@@ -34,8 +34,9 @@ public class PatientService {
         patient = newPatientInfo;
     }
 
-    public void editPassword(String email, String password) {
+    public Patient editPassword(String email, String password) {
         Patient patient = findPatientByEmail(email);
         patient.setPassword(password);
+        return patient;
     }
 }
