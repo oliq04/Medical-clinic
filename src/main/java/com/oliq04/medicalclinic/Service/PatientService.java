@@ -25,7 +25,7 @@ public class PatientService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    public void removePatientByEmail(String email) {
+    public void removeByEmail(String email) {
         patientRepository.deleteByEmail(email);
     }
 

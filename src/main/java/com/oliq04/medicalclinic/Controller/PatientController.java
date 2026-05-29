@@ -39,7 +39,7 @@ public class PatientController {
     @DeleteMapping("/{email}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteByEmail(@PathVariable String email) {
-        patientService.removePatientByEmail(email);
+        patientService.removeByEmail(email);
     }
 
     @PatchMapping("/{email}/password")
