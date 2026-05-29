@@ -13,31 +13,38 @@ public class PatientService {
     private final PatientRepository patientRepository;
 
     public List<Patient> getPatients() {
-        return patientRepository.getPatientList();
+        return patientRepository.getPatients();
     }
 
-    public void addPatient(Patient patient) {
-        patientRepository.addPatientToList(patient);
+    public Patient addPatient(Patient patient) {
+        return patientRepository.addPatient(patient);
     }
 
-    public Patient findPatientByEmail(String email) {
-        return patientRepository.findPatientByEmail(email)
+    public Patient findByEmail(String email) {
+        return patientRepository.findByEmail(email)
                 .orElseThrow(IllegalArgumentException::new);
     }
 
     public void removePatientByEmail(String email) {
-        patientRepository.deletePatientByEmail(email);
+        patientRepository.deleteByEmail(email);
     }
 
     public Patient modifyPatient(String email, Patient newPatientInfo) {
-        Patient patient = findPatientByEmail(email);
-        patient = newPatientInfo;
+        Patient patient = findByEmail(email);
+
+        patient.setFirstName(newPatientInfo.getFirstName());
+        patient.setLastName(newPatientInfo.getLastName());
+        patient.setEmail(newPatientInfo.getEmail());
+        patient.setPassword(newPatientInfo.getPassword());
+        patient.setBirthday(newPatientInfo.getBirthday());
+        patient.setIdCardNo(newPatientInfo.getIdCardNo());
+        patient.setPhoneNumber(newPatientInfo.getPhoneNumber());
+
         return patient;
     }
 
-    public Patient editPassword(String email, String password) {
-        Patient patient = findPatientByEmail(email);
+    public void editPassword(String email, String password) {
+        Patient patient = findByEmail(email);
         patient.setPassword(password);
-        return patient;
     }
 }

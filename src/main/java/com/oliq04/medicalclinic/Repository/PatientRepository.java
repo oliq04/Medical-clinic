@@ -1,29 +1,34 @@
 package com.oliq04.medicalclinic.Repository;
 
 import com.oliq04.medicalclinic.Model.Patient;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Getter
 @Repository
 @RequiredArgsConstructor
 public class PatientRepository {
 
-    private final List<Patient> patientList;
+    private final List<Patient> patients;
 
-    public void addPatientToList(Patient patient) {
-        patientList.add(patient);
+    public List<Patient> getPatients() {
+        return new ArrayList<>(patients);
     }
 
-    public Optional<Patient> findPatientByEmail(String email) {
-        return patientList.stream().filter(patient -> patient.getEmail().equals(email))
+    public Patient addPatient(Patient patient) {
+        patients.add(patient);
+        return patient;
+    }
+
+    public Optional<Patient> findByEmail(String email) {
+        return patients.stream()
+                .filter(patient -> patient.getEmail().equals(email))
                 .findFirst();
     }
 
-    public void deletePatientByEmail(String email) {
-        patientList.remove(findPatientByEmail(email).orElseThrow());
+    public void deleteByEmail(String email) {
+        patients.remove(findByEmail(email).orElseThrow());
     }
 }

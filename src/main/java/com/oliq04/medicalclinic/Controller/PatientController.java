@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/patient")
+@RequestMapping("/patients")
 @RequiredArgsConstructor
 public class PatientController {
     private final PatientService patientService;
@@ -21,28 +21,30 @@ public class PatientController {
     }
 
     @GetMapping("/{email}")
-    public Patient getPatientByEmail(@PathVariable String email) {
-        return patientService.findPatientByEmail(email);
+    public Patient getByEmail(@PathVariable String email) {
+        return patientService.findByEmail(email);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void addPatient(@RequestBody Patient patient) {
-        patientService.addPatient(patient);
+    public Patient addPatient(@RequestBody Patient patient) {
+        return patientService.addPatient(patient);
     }
 
     @PutMapping("/{email}")
-    public Patient modifyPatientCompletley(@PathVariable String email, @RequestBody Patient newPatientInfo) {
+    public Patient editPatient(@PathVariable String email, @RequestBody Patient newPatientInfo) {
         return patientService.modifyPatient(email, newPatientInfo);
     }
 
     @DeleteMapping("/{email}")
-    public void deletePatient(@PathVariable String email) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteByEmail(@PathVariable String email) {
         patientService.removePatientByEmail(email);
     }
 
     @PatchMapping("/{email}/password")
-    public Patient editPassword(@PathVariable String email, @RequestBody UpdatePasswordCommand command) {
-        return patientService.editPassword(email, command.getPassword());
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void editPasswordByEmail(@PathVariable String email, @RequestBody UpdatePasswordCommand command) {
+        patientService.editPassword(email, command.getPassword());
     }
 }
