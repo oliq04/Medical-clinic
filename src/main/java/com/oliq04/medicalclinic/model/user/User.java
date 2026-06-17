@@ -1,9 +1,8 @@
 package com.oliq04.medicalclinic.model.user;
 
+import com.oliq04.medicalclinic.model.doctor.Doctor;
 import com.oliq04.medicalclinic.model.patient.entity.Patient;
-
 import jakarta.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +24,9 @@ public class User {
 
     @OneToOne(mappedBy = "user")
     private Patient patient;
+
+    @OneToOne(mappedBy = "user")
+    private Doctor doctor;
 
     public User update(UserCommand userCommand) {
         this.setUsername(userCommand.getUsername());
