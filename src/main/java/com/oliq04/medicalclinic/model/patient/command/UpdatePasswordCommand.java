@@ -1,5 +1,6 @@
-package com.oliq04.medicalclinic.Model;
+package com.oliq04.medicalclinic.model.patient.command;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,5 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UpdatePasswordCommand {
+    @NotBlank
     private String password;
 }

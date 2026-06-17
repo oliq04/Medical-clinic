@@ -1,0 +1,57 @@
+package com.oliq04.medicalclinic.service;
+
+import com.oliq04.medicalclinic.exceptions.UserAlreadyExistsException;
+import com.oliq04.medicalclinic.exceptions.UserNotFoundException;
+import com.oliq04.medicalclinic.mapper.UserMapper;
+import com.oliq04.medicalclinic.model.user.User;
+import com.oliq04.medicalclinic.model.user.UserCommand;
+import com.oliq04.medicalclinic.model.user.UserDto;
+import com.oliq04.medicalclinic.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+
+    public List<UserDto> getUsers() {
+        return userRepository.findAll().stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public UserDto addUser(UserCommand user) {
+        User userEntity = userMapper.toEntityFromCommand(user);
+        userRepository.save(userEntity);
+        return userMapper.toDto(userEntity);
+    }
+
+    public UserDto getUserByEmail(String email) {
+        return userMapper.toDto(userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found", HttpStatus.NOT_FOUND)));
+    }
+
+    public UserDto editUser(String email, UserCommand userCommand) {
+        if (userRepository.existsByEmail(email) && !userCommand.getEmail().equals(email)) {
+            throw new UserAlreadyExistsException("User with given email already exists", HttpStatus.CONFLICT);
+        }
+        User user = userRepository.findByEmail(userCommand.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("User not found", HttpStatus.NOT_FOUND));
+        user.update(userCommand);
+        userRepository.save(user);
+        return userMapper.toDto(user);
+    }
+
+    public void deleteUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found", HttpStatus.NOT_FOUND));
+        userRepository.delete(user);
+    }
+}
