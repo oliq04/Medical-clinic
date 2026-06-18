@@ -21,7 +21,7 @@ public class DoctorController {
     }
 
     @PostMapping("/{email}")
-    public DoctorDto assignToClinic(@PathVariable String email, String clinicName) {
+    public DoctorDto assignToClinic(@PathVariable String email, @RequestParam("clinicName") String clinicName) {
         return doctorService.assignToClinicByEmail(email, clinicName);
     }
 

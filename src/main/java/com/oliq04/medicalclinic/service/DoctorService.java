@@ -39,8 +39,8 @@ public class DoctorService {
 
         List<Clinic> clinics = doctor.getClinics();
         clinics.add(clinicService.findByName(clinicName));
-        doctorRepository.save(doctor);
-        return doctorMapper.toDtoFromEntity(doctor);
+
+        return doctorMapper.toDtoFromEntity(doctorRepository.save(doctor));
     }
 
     public DoctorDto addDoctor(DoctorCommand doctorCommand) {

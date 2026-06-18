@@ -30,5 +30,6 @@ public interface UserMapper {
     @Mapping(target = "email", source = "patientCommand.email")
     UserCommand toCommandFromPatientCommand(PatientCommand patientCommand);
 
+    @Mapping(target = "username", source = "doctorCommand.email")
     UserCommand toCommand(DoctorCommand doctorCommand);
 }
