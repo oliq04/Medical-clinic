@@ -1,4 +1,4 @@
-package com.oliq04.medicalclinic.model;
+package com.oliq04.medicalclinic.model.specialization;
 
 import com.oliq04.medicalclinic.model.doctor.Doctor;
 import jakarta.persistence.Entity;
@@ -7,7 +7,6 @@ import jakarta.persistence.ManyToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.List;
 
 @Entity

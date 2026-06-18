@@ -39,10 +39,8 @@ public class PatientService {
         }
         UserCommand userCommand = userMapper.toCommandFromPatientCommand(patient);
         User user = userRepository.save(userMapper.toEntityFromCommand(userCommand));
-
         Patient patientEntity = patientMapper.toEntityFromCommand(patient);
         patientEntity.setUser(user);
-
         return patientMapper.toDto(patientRepository.save(patientEntity));
     }
 
@@ -52,7 +50,6 @@ public class PatientService {
 
     public void removeByEmail(String email) {
         Patient patient = findByUserEmailOrThrowNotFoundException(email, "Patient not found", HttpStatus.NOT_FOUND);
-
         patientRepository.delete(patient);
     }
 

@@ -1,6 +1,6 @@
 package com.oliq04.medicalclinic.model.doctor;
 
-import com.oliq04.medicalclinic.model.Specialization;
+import com.oliq04.medicalclinic.model.specialization.Specialization;
 import com.oliq04.medicalclinic.model.clinic.Clinic;
 import com.oliq04.medicalclinic.model.user.User;
 import jakarta.persistence.*;
@@ -16,6 +16,7 @@ import java.util.List;
 @Getter
 public class Doctor {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName;
     private String lastName;
@@ -30,7 +31,7 @@ public class Doctor {
             joinColumns = @JoinColumn(name = "doctor_id"),
             inverseJoinColumns = @JoinColumn(name = "specialization_id")
     )
-    List<Specialization> specializations;
+    private List<Specialization> specializations;
 
     @ManyToMany
     @JoinTable(
@@ -38,5 +39,5 @@ public class Doctor {
             joinColumns = @JoinColumn(name = "doctor_id"),
             inverseJoinColumns = @JoinColumn(name = "clinic_id")
     )
-    List<Clinic> clinics;
+    private List<Clinic> clinics;
 }

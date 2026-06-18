@@ -65,7 +65,6 @@
             <version>1.6.3</version>
         </dependency>
 
-        <!-- Source: https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct-processor</artifactId>

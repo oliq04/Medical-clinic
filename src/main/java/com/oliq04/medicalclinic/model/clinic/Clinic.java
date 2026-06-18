@@ -23,5 +23,13 @@ public class Clinic {
     private String address;
 
     @ManyToMany(mappedBy = "clinics")
-    List<Doctor> doctors;
+    private List<Doctor> doctors;
+
+    public Clinic update(ClinicCommand clinic) {
+        this.setName(clinic.getName());
+        this.setTown(clinic.getTown());
+        this.setPostCode(clinic.getPostCode());
+        this.setAddress(clinic.getAddress());
+        return this;
+    }
 }
