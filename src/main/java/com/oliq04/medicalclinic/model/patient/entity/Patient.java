@@ -1,7 +1,8 @@
 package com.oliq04.medicalclinic.model.patient.entity;
 
-import com.oliq04.medicalclinic.model.patient.command.PatientCommand;
+
 import com.oliq04.medicalclinic.model.patient.command.PatientEditCommand;
+import com.oliq04.medicalclinic.model.visit.Visit;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.Setter;
 import com.oliq04.medicalclinic.model.user.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,6 +31,9 @@ public class Patient {
 
     @OneToOne(cascade = CascadeType.ALL)
     private User user;
+
+    @OneToMany(mappedBy = "patient")
+    private List<Visit> visits;
 
     public Patient update(PatientEditCommand newPatientInfo) {
         this.setFirstName(newPatientInfo.getFirstName());

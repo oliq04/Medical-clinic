@@ -1,6 +1,7 @@
 package com.oliq04.medicalclinic.model.clinic;
 
 import com.oliq04.medicalclinic.model.doctor.Doctor;
+import com.oliq04.medicalclinic.model.visit.Visit;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,9 @@ public class Clinic {
 
     @ManyToMany(mappedBy = "clinics")
     private List<Doctor> doctors;
+
+    @OneToMany(mappedBy = "clinic")
+    private List<Visit> visits;
 
     public Clinic update(ClinicCommand clinic) {
         this.setName(clinic.getName());

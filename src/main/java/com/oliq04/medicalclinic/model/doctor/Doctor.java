@@ -3,6 +3,7 @@ package com.oliq04.medicalclinic.model.doctor;
 import com.oliq04.medicalclinic.model.specialization.Specialization;
 import com.oliq04.medicalclinic.model.clinic.Clinic;
 import com.oliq04.medicalclinic.model.user.User;
+import com.oliq04.medicalclinic.model.visit.Visit;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,9 @@ public class Doctor {
     @OneToOne
     private User user;
 
+    @OneToMany(mappedBy = "doctor")
+    private List<Visit> visits;
+
     @ManyToMany
     @JoinTable(
             name = "doctor_specialization",
@@ -40,4 +44,12 @@ public class Doctor {
             inverseJoinColumns = @JoinColumn(name = "clinic_id")
     )
     private List<Clinic> clinics;
+
+    public Doctor update(DoctorEditCommand doctorEditCommand) {
+        this.setFirstName(doctorEditCommand.getFirstName());
+        this.setLastName(doctorEditCommand.getLastName());
+        this.setClinics(doctorEditCommand.getClinics());
+        this.setSpecializations(doctorEditCommand.getSpecialization());
+        return this;
+    }
 }
