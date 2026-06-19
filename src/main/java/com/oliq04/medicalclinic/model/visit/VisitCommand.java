@@ -1,5 +1,6 @@
 package com.oliq04.medicalclinic.model.visit;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
 public class VisitCommand {
     private LocalDateTime startTime;
     private LocalDateTime endTime;

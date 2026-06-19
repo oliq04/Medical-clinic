@@ -48,7 +48,7 @@ public class VisitService {
         newVisit.setStartDate(visitCommand.getStartTime());
         newVisit.setEndDate(visitCommand.getEndTime());
         newVisit.setClinic(clinic);
-        return visitMapper.toDto(visitRepository.save(visitMapper.toEntity(visitCommand)));
+        return visitMapper.toDto(visitRepository.save(newVisit));
     }
 
     public List<VisitDto> getVisits() {

@@ -19,7 +19,7 @@ public class ClinicController {
     private final ClinicService clinicService;
 
     @GetMapping
-    public List<Clinic> getClinics() {
+    public List<ClinicDto> getClinics() {
         return clinicService.getClinics();
     }
 

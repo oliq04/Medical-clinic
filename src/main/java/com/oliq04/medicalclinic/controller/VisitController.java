@@ -4,10 +4,7 @@ import com.oliq04.medicalclinic.model.visit.VisitCommand;
 import com.oliq04.medicalclinic.model.visit.VisitDto;
 import com.oliq04.medicalclinic.service.VisitService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,7 +16,7 @@ public class VisitController {
     private final VisitService visitService;
 
     @PostMapping
-    public VisitDto createVisit(VisitCommand visitCommand) {
+    public VisitDto createVisit(@RequestBody VisitCommand visitCommand) {
         return visitService.createVisit(visitCommand);
     }
 

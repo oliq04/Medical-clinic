@@ -45,11 +45,11 @@ public class Doctor {
     )
     private List<Clinic> clinics;
 
-    public Doctor update(DoctorEditCommand doctorEditCommand) {
+    public Doctor update(DoctorEditCommand doctorEditCommand, List<Specialization> specializations, List<Clinic> clinics) {
         this.setFirstName(doctorEditCommand.getFirstName());
         this.setLastName(doctorEditCommand.getLastName());
-        this.setClinics(doctorEditCommand.getClinics());
-        this.setSpecializations(doctorEditCommand.getSpecialization());
+        this.setClinics(clinics);
+        this.setSpecializations(specializations);
         return this;
     }
 }

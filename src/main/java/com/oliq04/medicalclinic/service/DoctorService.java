@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -74,14 +75,24 @@ public class DoctorService {
         Doctor doctor = doctorRepository.findByUserEmail(email)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with given email not found", HttpStatus.NOT_FOUND));
 
-        doctor.update(doctorEditCommand);
+
+        List<Specialization> specializationsMapped = doctorEditCommand.getSpecialization().stream()
+                .map(specializationNameCommand -> specializationService.findSpecialization(specializationNameCommand.getSpecializationName()))
+                .collect(Collectors.toList());
+
+
+        List<Clinic> clinicsMapped = doctorEditCommand.getClinics().stream()
+                .map(clinicNameCommand -> clinicService.findByName(clinicNameCommand.getName()))
+                .collect(Collectors.toList());
+
+        doctor.update(doctorEditCommand, specializationsMapped, clinicsMapped);
         return doctorMapper.toDtoFromEntity(doctorRepository.save(doctor));
     }
 
     public void deleteDoctor(String email) {
         Doctor doctor = doctorRepository.findByUserEmail(email)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with given email not found", HttpStatus.NOT_FOUND));
-        doctorRepository.delete(doctor);
+        doctorRepository.deleteById(doctor.getId());
     }
 
 }

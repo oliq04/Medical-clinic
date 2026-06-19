@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class VisitDto {
-    private Long id;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Patient patient;

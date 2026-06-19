@@ -20,8 +20,10 @@ public class ClinicService {
     private final ClinicRepository clinicRepository;
     private final ClinicMapper clinicMapper;
 
-    public List<Clinic> getClinics() {
-        return clinicRepository.findAll();
+    public List<ClinicDto> getClinics() {
+        return clinicRepository.findAll().stream()
+                .map(clinicMapper::toDtoFromEntity)
+                .toList();
     }
 
     public ClinicDto getClinic(String name) {
