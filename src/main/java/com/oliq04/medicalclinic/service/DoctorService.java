@@ -1,5 +1,6 @@
 package com.oliq04.medicalclinic.service;
 
+import com.oliq04.medicalclinic.exceptions.ClinicNotFoundException;
 import com.oliq04.medicalclinic.exceptions.DoctorNotFoundException;
 import com.oliq04.medicalclinic.exceptions.UserAlreadyExistsException;
 import com.oliq04.medicalclinic.mapper.DoctorMapper;
@@ -8,7 +9,7 @@ import com.oliq04.medicalclinic.model.clinic.Clinic;
 import com.oliq04.medicalclinic.model.doctor.Doctor;
 import com.oliq04.medicalclinic.model.doctor.DoctorCommand;
 import com.oliq04.medicalclinic.model.doctor.DoctorDto;
-
+import com.oliq04.medicalclinic.model.doctor.DoctorEditCommand;
 import com.oliq04.medicalclinic.model.specialization.Specialization;
 import com.oliq04.medicalclinic.model.user.User;
 import com.oliq04.medicalclinic.model.user.UserCommand;
@@ -28,10 +29,10 @@ public class DoctorService {
     private final DoctorRepository doctorRepository;
     private final ClinicService clinicService;
     private final DoctorMapper doctorMapper;
-    private final UserService userService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final SpecializationService specializationService;
+    private final ClinicRepository clinicRepository;
 
     public DoctorDto assignToClinicByEmail(String email, String clinicName) {
         Doctor doctor = doctorRepository.findByUserEmail(email)
@@ -62,4 +63,25 @@ public class DoctorService {
                 .map(doctorMapper::toDtoFromEntity)
                 .toList();
     }
+
+    public DoctorDto getDoctor(String email) {
+        Doctor doctor = doctorRepository.findByUserEmail(email)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor with given email not found", HttpStatus.NOT_FOUND));
+        return doctorMapper.toDtoFromEntity(doctor);
+    }
+
+    public DoctorDto editDoctor(String email, DoctorEditCommand doctorEditCommand) {
+        Doctor doctor = doctorRepository.findByUserEmail(email)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor with given email not found", HttpStatus.NOT_FOUND));
+
+        doctor.update(doctorEditCommand);
+        return doctorMapper.toDtoFromEntity(doctorRepository.save(doctor));
+    }
+
+    public void deleteDoctor(String email) {
+        Doctor doctor = doctorRepository.findByUserEmail(email)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor with given email not found", HttpStatus.NOT_FOUND));
+        doctorRepository.delete(doctor);
+    }
+
 }
