@@ -1,5 +1,6 @@
 package com.oliq04.medicalclinic.model.doctor;
 
+import com.oliq04.medicalclinic.model.specialization.Specialization;
 import com.oliq04.medicalclinic.model.clinic.Clinic;
 import com.oliq04.medicalclinic.model.specialization.Specialization;
 import com.oliq04.medicalclinic.model.user.User;

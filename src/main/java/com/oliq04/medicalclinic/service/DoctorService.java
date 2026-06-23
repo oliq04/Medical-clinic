@@ -1,5 +1,6 @@
 package com.oliq04.medicalclinic.service;
 
+import com.oliq04.medicalclinic.exceptions.ClinicNotFoundException;
 import com.oliq04.medicalclinic.exceptions.DoctorNotFoundException;
 import com.oliq04.medicalclinic.exceptions.UserAlreadyExistsException;
 import com.oliq04.medicalclinic.mapper.DoctorMapper;
