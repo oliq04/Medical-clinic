@@ -25,4 +25,9 @@ public class VisitController {
         return visitService.getVisits();
     }
 
+    @PostMapping("/patient")
+    public VisitDto assignPatient(@RequestParam("patientId") Long patientId, @RequestParam("visitId") Long visitId) {
+        return visitService.assignPatient(patientId, visitId);
+    }
+
 }

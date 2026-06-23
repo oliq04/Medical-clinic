@@ -45,4 +45,5 @@ public class DoctorController {
     public void deleteDoctor(@PathVariable String email) {
         doctorService.deleteDoctor(email);
     }
+
 }

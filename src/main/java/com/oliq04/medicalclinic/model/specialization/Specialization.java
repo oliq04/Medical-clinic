@@ -1,22 +1,16 @@
 package com.oliq04.medicalclinic.model.specialization;
 
-import com.oliq04.medicalclinic.model.doctor.Doctor;
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
-@Entity
-@NoArgsConstructor
 @Getter
-@Setter
-public class Specialization {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String specializationName;
-    //zamienic na enum w kodzie
-    @ManyToMany(mappedBy = "specializations")
-    List<Doctor> doctors;
+@AllArgsConstructor
+
+public enum Specialization {
+    CARDIOLOGY("cardiology"),
+    STOMATOLOGY("stomatology"),
+    GASTROLOGY("gastrology");
+
+    private final String specializationName;
 }

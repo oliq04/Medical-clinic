@@ -1,6 +1,5 @@
 package com.oliq04.medicalclinic.service;
 
-import com.oliq04.medicalclinic.exceptions.ClinicNotFoundException;
 import com.oliq04.medicalclinic.exceptions.DoctorNotFoundException;
 import com.oliq04.medicalclinic.exceptions.UserAlreadyExistsException;
 import com.oliq04.medicalclinic.mapper.DoctorMapper;
@@ -32,7 +31,6 @@ public class DoctorService {
     private final DoctorMapper doctorMapper;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final SpecializationService specializationService;
     private final ClinicRepository clinicRepository;
 
     public DoctorDto assignToClinicByEmail(String email, String clinicName) {
@@ -51,8 +49,7 @@ public class DoctorService {
         }
 
         Doctor doctor = doctorMapper.toEntity(doctorCommand);
-        Specialization specialization = specializationService.findSpecialization(doctorCommand.getSpecialization());
-        doctor.setSpecialization(specialization.getSpecializationName());
+        doctor.setSpecialization(Specialization.valueOf(doctorCommand.getSpecialization().toUpperCase()));
         UserCommand userCommand = userMapper.toCommand(doctorCommand);
         User user = userRepository.save(userMapper.toEntityFromCommand(userCommand));
         doctor.setUser(user);
@@ -75,23 +72,21 @@ public class DoctorService {
         Doctor doctor = doctorRepository.findByUserEmail(email)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with given email not found", HttpStatus.NOT_FOUND));
 
-
-        List<Specialization> specializationsMapped = doctorEditCommand.getSpecialization().stream()
-                .map(specializationNameCommand -> specializationService.findSpecialization(specializationNameCommand.getSpecializationName()))
-                .collect(Collectors.toList());
-
-
         List<Clinic> clinicsMapped = doctorEditCommand.getClinics().stream()
                 .map(clinicNameCommand -> clinicService.findByName(clinicNameCommand.getName()))
                 .collect(Collectors.toList());
 
-        doctor.update(doctorEditCommand, specializationsMapped, clinicsMapped);
+        doctor.update(doctorEditCommand, clinicsMapped);
         return doctorMapper.toDtoFromEntity(doctorRepository.save(doctor));
     }
 
     public void deleteDoctor(String email) {
         Doctor doctor = doctorRepository.findByUserEmail(email)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with given email not found", HttpStatus.NOT_FOUND));
+        doctor.getVisits().forEach(visit -> visit.setDoctor(null));
+        doctor.getClinics().forEach(clinic -> clinic.setDoctors(null));
+        doctor.setUser(null);
+        doctorRepository.save(doctor);
         doctorRepository.deleteById(doctor.getId());
     }
 

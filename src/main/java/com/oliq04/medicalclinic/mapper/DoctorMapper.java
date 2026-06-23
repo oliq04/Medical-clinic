@@ -14,5 +14,6 @@ public interface DoctorMapper {
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "clinics", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "specialization", ignore = true)
     Doctor toEntity(DoctorCommand doctorCommand);
 }

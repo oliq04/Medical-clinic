@@ -1,9 +1,6 @@
 package com.oliq04.medicalclinic.model.doctor;
 
-import com.oliq04.medicalclinic.model.clinic.Clinic;
 import com.oliq04.medicalclinic.model.clinic.ClinicNameCommand;
-import com.oliq04.medicalclinic.model.specialization.Specialization;
-import com.oliq04.medicalclinic.model.specialization.SpecializationNameCommand;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +14,6 @@ import java.util.List;
 public class DoctorEditCommand {
     private String firstName;
     private String lastName;
-    private List<SpecializationNameCommand> specialization;
+    private String specialization;
     private List<ClinicNameCommand> clinics;
 }

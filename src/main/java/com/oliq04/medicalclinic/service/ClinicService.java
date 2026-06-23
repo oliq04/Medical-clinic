@@ -45,7 +45,7 @@ public class ClinicService {
     }
 
     public ClinicDto editClinic(String name, ClinicCommand clinicCommand) {
-        if (clinicRepository.existsByName(name) && !clinicCommand.getName().equals(name)) {
+        if (clinicRepository.existsByName(clinicCommand.getName()) && !clinicCommand.getName().equals(name)) {
             throw new ClinicAlreadyExistsException("Clinic with given name already exists", HttpStatus.CONFLICT);
         }
         Clinic clinic = findByName(name);

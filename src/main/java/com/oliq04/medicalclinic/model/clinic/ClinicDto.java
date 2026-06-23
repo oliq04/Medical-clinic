@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ClinicDto {
+    private Long id;
     private String name;
     private String town;
     private String postCode;
