@@ -1,6 +1,5 @@
 package com.oliq04.medicalclinic.model.user;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

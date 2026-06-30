@@ -1,12 +1,13 @@
 package com.oliq04.medicalclinic.controller;
 
+import com.oliq04.medicalclinic.model.PageableDto;
 import com.oliq04.medicalclinic.model.user.UserCommand;
 import com.oliq04.medicalclinic.model.user.UserDto;
 import com.oliq04.medicalclinic.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -17,8 +18,8 @@ public class UserController {
     public final UserService userService;
 
     @GetMapping
-    public List<UserDto> getUsers() {
-        return userService.getUsers();
+    public PageableDto<UserDto> getUsers(@RequestParam("page") int page, @RequestParam("size") int size) {
+        return userService.getUsers(page, size);
     }
 
     @GetMapping("/{email}")
@@ -28,12 +29,12 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@RequestBody UserCommand userCommand) {
+    public UserDto createUser(@Valid @RequestBody UserCommand userCommand) {
         return userService.addUser(userCommand);
     }
 
     @PutMapping("/{email}")
-    public UserDto editUser(@PathVariable String email, @RequestBody UserCommand userCommand) {
+    public UserDto editUser(@PathVariable String email, @Valid @RequestBody UserCommand userCommand) {
         return userService.editUser(email, userCommand);
     }
 
@@ -42,5 +43,4 @@ public class UserController {
     public void deleteUserByEmail(@PathVariable String email) {
         userService.deleteUserByEmail(email);
     }
-
 }

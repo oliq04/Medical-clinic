@@ -1,10 +1,10 @@
 package com.oliq04.medicalclinic.service;
 
-import com.oliq04.medicalclinic.exceptions.ClinicNotFoundException;
 import com.oliq04.medicalclinic.exceptions.DoctorNotFoundException;
 import com.oliq04.medicalclinic.exceptions.UserAlreadyExistsException;
 import com.oliq04.medicalclinic.mapper.DoctorMapper;
 import com.oliq04.medicalclinic.mapper.UserMapper;
+import com.oliq04.medicalclinic.model.PageableDto;
 import com.oliq04.medicalclinic.model.clinic.Clinic;
 import com.oliq04.medicalclinic.model.doctor.Doctor;
 import com.oliq04.medicalclinic.model.doctor.DoctorCommand;
@@ -17,12 +17,14 @@ import com.oliq04.medicalclinic.repository.ClinicRepository;
 import com.oliq04.medicalclinic.repository.DoctorRepository;
 import com.oliq04.medicalclinic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
@@ -57,10 +59,13 @@ public class DoctorService {
         return doctorMapper.toDtoFromEntity(doctorRepository.save(doctor));
     }
 
-    public List<DoctorDto> getDoctors() {
-        return doctorRepository.findAll().stream()
+    public PageableDto<DoctorDto> getDoctors(int pageNumber, int doctorsCount) {
+        Pageable page = PageRequest.of(pageNumber, doctorsCount);
+        Page<Doctor> doctorPage = doctorRepository.findAll(page);
+        List<DoctorDto> doctorDtoList = doctorRepository.findAll(page).stream()
                 .map(doctorMapper::toDtoFromEntity)
                 .toList();
+        return PageableDto.toPageable(doctorDtoList, doctorPage);
     }
 
     public DoctorDto getDoctor(String email) {
@@ -86,7 +91,9 @@ public class DoctorService {
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with given email not found", HttpStatus.NOT_FOUND));
         doctor.getVisits().forEach(visit -> visit.setDoctor(null));
         doctor.getClinics().forEach(clinic -> clinic.setDoctors(null));
+        doctor.getUser().setDoctor(null);
         doctor.setUser(null);
+
         doctorRepository.save(doctor);
         doctorRepository.deleteById(doctor.getId());
     }

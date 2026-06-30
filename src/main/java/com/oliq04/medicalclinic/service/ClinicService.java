@@ -3,11 +3,15 @@ package com.oliq04.medicalclinic.service;
 import com.oliq04.medicalclinic.exceptions.ClinicAlreadyExistsException;
 import com.oliq04.medicalclinic.exceptions.ClinicNotFoundException;
 import com.oliq04.medicalclinic.mapper.ClinicMapper;
+import com.oliq04.medicalclinic.model.PageableDto;
 import com.oliq04.medicalclinic.model.clinic.Clinic;
 import com.oliq04.medicalclinic.model.clinic.ClinicCommand;
 import com.oliq04.medicalclinic.model.clinic.ClinicDto;
 import com.oliq04.medicalclinic.repository.ClinicRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +24,13 @@ public class ClinicService {
     private final ClinicRepository clinicRepository;
     private final ClinicMapper clinicMapper;
 
-    public List<ClinicDto> getClinics() {
-        return clinicRepository.findAll().stream()
+    public PageableDto<ClinicDto> getClinics(int pageNumber, int clinicsCount) {
+        Pageable page = PageRequest.of(pageNumber, clinicsCount);
+        Page<Clinic> pageClinics = clinicRepository.findAll(page);
+        List<ClinicDto> clinicDto = pageClinics.stream()
                 .map(clinicMapper::toDtoFromEntity)
                 .toList();
+        return PageableDto.toPageable(clinicDto, pageClinics);
     }
 
     public ClinicDto getClinic(String name) {

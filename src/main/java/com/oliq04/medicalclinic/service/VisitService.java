@@ -5,6 +5,7 @@ import com.oliq04.medicalclinic.exceptions.DoctorNotFoundException;
 import com.oliq04.medicalclinic.exceptions.PatientNotFoundException;
 import com.oliq04.medicalclinic.exceptions.VisitOverlapException;
 import com.oliq04.medicalclinic.mapper.VisitMapper;
+import com.oliq04.medicalclinic.model.PageableDto;
 import com.oliq04.medicalclinic.model.clinic.Clinic;
 import com.oliq04.medicalclinic.model.doctor.Doctor;
 import com.oliq04.medicalclinic.model.patient.entity.Patient;
@@ -16,11 +17,12 @@ import com.oliq04.medicalclinic.repository.DoctorRepository;
 import com.oliq04.medicalclinic.repository.PatientRepository;
 import com.oliq04.medicalclinic.repository.VisitRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -32,21 +34,19 @@ public class VisitService {
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
     private final ClinicRepository clinicRepository;
-    private final PatientService patientService;
 
     public VisitDto createVisit(VisitCommand visitCommand) {
         if (!isTimeQuarterOfHour(visitCommand.getStartTime().getMinute())) {
             throw new IllegalArgumentException();
         }
 
-        if (!visitRepository.findOverlappingVisits(visitCommand.getStartTime(), visitCommand.getEndTime()).isEmpty()) {
+        Doctor doctor = doctorRepository.findByUserEmail(visitCommand.getDoctorEmail())
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found", HttpStatus.NOT_FOUND));
+
+        if (!visitRepository.findOverlappingVisits(visitCommand.getStartTime(), visitCommand.getEndTime(), doctor.getId()).isEmpty()) {
             throw new VisitOverlapException("Visits overlap", HttpStatus.CONFLICT);
         }
         Visit newVisit = new Visit();
-        Doctor doctor = doctorRepository.findByUserEmail(visitCommand.getDoctorEmail())
-                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found", HttpStatus.NOT_FOUND));
-        //Patient patient = patientRepository.findPatientByUserEmail(visitCommand.getPatientEmail())
-        //.orElseThrow(() -> new PatientNotFoundException("Patient not found", HttpStatus.NOT_FOUND));
         Clinic clinic = clinicRepository.findByName(visitCommand.getClinicName())
                 .orElseThrow(() -> new ClinicNotFoundException("Clinic not found", HttpStatus.NOT_FOUND));
         newVisit.setDoctor(doctor);
@@ -57,10 +57,13 @@ public class VisitService {
         return visitMapper.toDto(visitRepository.save(newVisit));
     }
 
-    public List<VisitDto> getVisits() {
-        return visitRepository.findAll().stream()
+    public PageableDto<VisitDto> getVisits(int pageNumber, int visitsCount) {
+        Pageable page = PageRequest.of(pageNumber, visitsCount);
+        Page<Visit> visits = visitRepository.findAll(page);
+        List<VisitDto> visitDtos = visits.stream()
                 .map(visitMapper::toDto)
                 .toList();
+        return PageableDto.toPageable(visitDtos, visits);
     }
 
     public VisitDto assignPatient(Long patientId, Long visitId) {
@@ -68,6 +71,7 @@ public class VisitService {
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found", HttpStatus.NOT_FOUND));
         visit.setPatient(patient);
+        visitRepository.save(visit);
         return visitMapper.toDto(visit);
     }
 

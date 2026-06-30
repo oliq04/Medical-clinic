@@ -2,7 +2,6 @@ package com.oliq04.medicalclinic.model.specialization;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @AllArgsConstructor

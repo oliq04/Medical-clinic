@@ -3,11 +3,15 @@ package com.oliq04.medicalclinic.service;
 import com.oliq04.medicalclinic.exceptions.UserAlreadyExistsException;
 import com.oliq04.medicalclinic.exceptions.UserNotFoundException;
 import com.oliq04.medicalclinic.mapper.UserMapper;
+import com.oliq04.medicalclinic.model.PageableDto;
 import com.oliq04.medicalclinic.model.user.User;
 import com.oliq04.medicalclinic.model.user.UserCommand;
 import com.oliq04.medicalclinic.model.user.UserDto;
 import com.oliq04.medicalclinic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +25,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public List<UserDto> getUsers() {
-        return userRepository.findAll().stream()
+    public PageableDto<UserDto> getUsers(int pageNumber, int usersCount) {
+        Pageable page = PageRequest.of(pageNumber, usersCount);
+        Page<User> userPage = userRepository.findAll(page);
+        List<UserDto> userDtos = userPage.stream()
                 .map(userMapper::toDto)
                 .collect(Collectors.toList());
+        return PageableDto.toPageable(userDtos, userPage);
     }
 
     public UserDto addUser(UserCommand user) {

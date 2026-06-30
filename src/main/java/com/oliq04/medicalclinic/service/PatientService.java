@@ -3,6 +3,7 @@ package com.oliq04.medicalclinic.service;
 import com.oliq04.medicalclinic.exceptions.PatientNotFoundException;
 import com.oliq04.medicalclinic.mapper.PatientMapper;
 import com.oliq04.medicalclinic.mapper.UserMapper;
+import com.oliq04.medicalclinic.model.PageableDto;
 import com.oliq04.medicalclinic.model.patient.command.PatientCommand;
 import com.oliq04.medicalclinic.model.patient.command.PatientEditCommand;
 import com.oliq04.medicalclinic.model.patient.entity.Patient;
@@ -13,6 +14,9 @@ import com.oliq04.medicalclinic.repository.PatientRepository;
 import com.oliq04.medicalclinic.exceptions.PatientAlreadyExistsException;
 import com.oliq04.medicalclinic.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -27,10 +31,13 @@ public class PatientService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
 
-    public List<PatientDto> getPatients() {
-        return patientRepository.findAll().stream()
+    public PageableDto<PatientDto> getPatients(int pageNumber, int patientsCount) {
+        Pageable page = PageRequest.of(pageNumber, patientsCount);
+        Page<Patient> patientDtoPage = patientRepository.findAll(page);
+        List<PatientDto> patients = patientDtoPage.stream()
                 .map(patientMapper::toDto)
                 .toList();
+        return PageableDto.toPageable(patients, patientDtoPage);
     }
 
     public PatientDto addPatient(PatientCommand patient) {
@@ -58,12 +65,6 @@ public class PatientService {
         patient.update(newPatientInfo);
         patientRepository.save(patient);
         return patientMapper.toDto(patient);
-    }
-
-    public void editPassword(String email, String password) {
-        Patient patient = findByUserEmailOrThrowNotFoundException(email, "Patient not found", HttpStatus.NOT_FOUND);
-        patient.getUser().setPassword(password);
-        patientRepository.save(patient);
     }
 
     private Patient findByUserEmailOrThrowNotFoundException(String email, String message, HttpStatus status) {

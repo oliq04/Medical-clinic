@@ -3,7 +3,6 @@ package com.oliq04.medicalclinic.mapper;
 import com.oliq04.medicalclinic.model.doctor.Doctor;
 import com.oliq04.medicalclinic.model.doctor.DoctorCommand;
 import com.oliq04.medicalclinic.model.doctor.DoctorDto;
-import com.oliq04.medicalclinic.model.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

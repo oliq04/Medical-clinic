@@ -1,6 +1,6 @@
 package com.oliq04.medicalclinic.controller;
 
-import com.oliq04.medicalclinic.model.clinic.Clinic;
+import com.oliq04.medicalclinic.model.PageableDto;
 import com.oliq04.medicalclinic.model.clinic.ClinicCommand;
 import com.oliq04.medicalclinic.model.clinic.ClinicDto;
 import com.oliq04.medicalclinic.service.ClinicService;
@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -19,8 +18,8 @@ public class ClinicController {
     private final ClinicService clinicService;
 
     @GetMapping
-    public List<ClinicDto> getClinics() {
-        return clinicService.getClinics();
+    public PageableDto<ClinicDto> getClinics(@RequestParam("page") int page, @RequestParam("size") int size) {
+        return clinicService.getClinics(page, size);
     }
 
     @GetMapping("/{name}")
@@ -29,6 +28,7 @@ public class ClinicController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ClinicDto addClinic(@Valid @RequestBody ClinicCommand clinicCommand) {
         return clinicService.addClinic(clinicCommand);
     }
@@ -40,8 +40,7 @@ public class ClinicController {
     }
 
     @PutMapping("/{name}")
-    public ClinicDto editClinic(@PathVariable String name, @RequestBody ClinicCommand clinicCommand) {
+    public ClinicDto editClinic(@PathVariable String name, @Valid @RequestBody ClinicCommand clinicCommand) {
         return clinicService.editClinic(name, clinicCommand);
     }
-
 }
