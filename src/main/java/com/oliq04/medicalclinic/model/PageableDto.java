@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PageableDto<T> {
     private int pageSize;
-    private int currentSite;
+    private int currentPage;
     private int total;
     private int totalPages;
     private List<T> content;
