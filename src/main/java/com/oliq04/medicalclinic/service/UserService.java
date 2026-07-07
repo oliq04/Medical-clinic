@@ -8,6 +8,7 @@ import com.oliq04.medicalclinic.model.user.User;
 import com.oliq04.medicalclinic.model.user.UserCommand;
 import com.oliq04.medicalclinic.model.user.UserDto;
 import com.oliq04.medicalclinic.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +35,7 @@ public class UserService {
         return PageableDto.toPageable(userDtos, userPage);
     }
 
+    @Transactional
     public UserDto addUser(UserCommand user) {
         User userEntity = userMapper.toEntityFromCommand(user);
         userRepository.save(userEntity);
@@ -45,6 +47,7 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found", HttpStatus.NOT_FOUND)));
     }
 
+    @Transactional
     public UserDto editUser(String email, UserCommand userCommand) {
         if (userRepository.existsByEmail(email) && !userCommand.getEmail().equals(email)) {
             throw new UserAlreadyExistsException("User with given email already exists", HttpStatus.CONFLICT);
@@ -56,6 +59,7 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
+    @Transactional
     public void deleteUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found", HttpStatus.NOT_FOUND));

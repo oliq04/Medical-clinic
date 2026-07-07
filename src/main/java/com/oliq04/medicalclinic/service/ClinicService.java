@@ -8,6 +8,7 @@ import com.oliq04.medicalclinic.model.clinic.Clinic;
 import com.oliq04.medicalclinic.model.clinic.ClinicCommand;
 import com.oliq04.medicalclinic.model.clinic.ClinicDto;
 import com.oliq04.medicalclinic.repository.ClinicRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,15 +43,18 @@ public class ClinicService {
                 .orElseThrow(() -> new ClinicNotFoundException("Clinic with given name not found", HttpStatus.NOT_FOUND));
     }
 
+    @Transactional
     public ClinicDto addClinic(ClinicCommand clinicCommand) {
         Clinic clinic = clinicMapper.toEntityFromCommand(clinicCommand);
         return clinicMapper.toDtoFromEntity(clinicRepository.save(clinic));
     }
 
+    @Transactional
     public void deleteClinic(String name) {
         clinicRepository.delete(findByName(name));
     }
 
+    @Transactional
     public ClinicDto editClinic(String name, ClinicCommand clinicCommand) {
         if (clinicRepository.existsByName(clinicCommand.getName()) && !clinicCommand.getName().equals(name)) {
             throw new ClinicAlreadyExistsException("Clinic with given name already exists", HttpStatus.CONFLICT);

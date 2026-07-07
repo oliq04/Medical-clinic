@@ -13,6 +13,7 @@ import com.oliq04.medicalclinic.model.user.UserCommand;
 import com.oliq04.medicalclinic.repository.PatientRepository;
 import com.oliq04.medicalclinic.exceptions.PatientAlreadyExistsException;
 import com.oliq04.medicalclinic.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +41,7 @@ public class PatientService {
         return PageableDto.toPageable(patients, patientDtoPage);
     }
 
+    @Transactional
     public PatientDto addPatient(PatientCommand patient) {
         if (patientRepository.existsByUserEmail(patient.getEmail())) {
             throw new PatientAlreadyExistsException("Patient with given email already exists", HttpStatus.CONFLICT);
@@ -55,11 +57,13 @@ public class PatientService {
         return patientMapper.toDto(findByUserEmailOrThrowNotFoundException(email, "Patient not found", HttpStatus.NOT_FOUND));
     }
 
+    @Transactional
     public void removeByEmail(String email) {
         Patient patient = findByUserEmailOrThrowNotFoundException(email, "Patient not found", HttpStatus.NOT_FOUND);
         patientRepository.delete(patient);
     }
 
+    @Transactional
     public PatientDto modifyPatient(String email, PatientEditCommand newPatientInfo) {
         Patient patient = findByUserEmailOrThrowNotFoundException(email, "Patient not found", HttpStatus.NOT_FOUND);
         patient.update(newPatientInfo);

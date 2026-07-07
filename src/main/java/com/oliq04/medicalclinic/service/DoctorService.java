@@ -1,5 +1,6 @@
 package com.oliq04.medicalclinic.service;
 
+import com.oliq04.medicalclinic.exceptions.DoctorAlreadyAssignedException;
 import com.oliq04.medicalclinic.exceptions.DoctorNotFoundException;
 import com.oliq04.medicalclinic.exceptions.UserAlreadyExistsException;
 import com.oliq04.medicalclinic.mapper.DoctorMapper;
@@ -13,16 +14,15 @@ import com.oliq04.medicalclinic.model.doctor.DoctorEditCommand;
 import com.oliq04.medicalclinic.model.specialization.Specialization;
 import com.oliq04.medicalclinic.model.user.User;
 import com.oliq04.medicalclinic.model.user.UserCommand;
-import com.oliq04.medicalclinic.repository.ClinicRepository;
 import com.oliq04.medicalclinic.repository.DoctorRepository;
 import com.oliq04.medicalclinic.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,18 +34,22 @@ public class DoctorService {
     private final DoctorMapper doctorMapper;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final ClinicRepository clinicRepository;
 
+    @Transactional
     public DoctorDto assignToClinicByEmail(String email, String clinicName) {
         Doctor doctor = doctorRepository.findByUserEmail(email)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with given email not found", HttpStatus.NOT_FOUND));
 
+        if (doctorRepository.existsByUserEmailAndClinicsName(email, clinicName)) {
+            throw new DoctorAlreadyAssignedException("Doctor already assigned to this clinic", HttpStatus.CONFLICT);
+        }
         List<Clinic> clinics = doctor.getClinics();
         clinics.add(clinicService.findByName(clinicName));
 
         return doctorMapper.toDtoFromEntity(doctorRepository.save(doctor));
     }
 
+    @Transactional
     public DoctorDto addDoctor(DoctorCommand doctorCommand) {
         if (userRepository.existsByEmail(doctorCommand.getEmail())) {
             throw new UserAlreadyExistsException("User with given email already exists", HttpStatus.CONFLICT);
@@ -74,6 +78,7 @@ public class DoctorService {
         return doctorMapper.toDtoFromEntity(doctor);
     }
 
+    @Transactional
     public DoctorDto editDoctor(String email, DoctorEditCommand doctorEditCommand) {
         Doctor doctor = doctorRepository.findByUserEmail(email)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with given email not found", HttpStatus.NOT_FOUND));
@@ -86,6 +91,7 @@ public class DoctorService {
         return doctorMapper.toDtoFromEntity(doctorRepository.save(doctor));
     }
 
+    @Transactional
     public void deleteDoctor(String email) {
         Doctor doctor = doctorRepository.findByUserEmail(email)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with given email not found", HttpStatus.NOT_FOUND));
@@ -97,5 +103,4 @@ public class DoctorService {
         doctorRepository.save(doctor);
         doctorRepository.deleteById(doctor.getId());
     }
-
 }

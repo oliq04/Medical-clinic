@@ -1,9 +1,6 @@
 package com.oliq04.medicalclinic.service;
 
-import com.oliq04.medicalclinic.exceptions.ClinicNotFoundException;
-import com.oliq04.medicalclinic.exceptions.DoctorNotFoundException;
-import com.oliq04.medicalclinic.exceptions.PatientNotFoundException;
-import com.oliq04.medicalclinic.exceptions.VisitOverlapException;
+import com.oliq04.medicalclinic.exceptions.*;
 import com.oliq04.medicalclinic.mapper.VisitMapper;
 import com.oliq04.medicalclinic.model.PageableDto;
 import com.oliq04.medicalclinic.model.clinic.Clinic;
@@ -16,6 +13,7 @@ import com.oliq04.medicalclinic.repository.ClinicRepository;
 import com.oliq04.medicalclinic.repository.DoctorRepository;
 import com.oliq04.medicalclinic.repository.PatientRepository;
 import com.oliq04.medicalclinic.repository.VisitRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,13 +26,13 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class VisitService {
-
     private final VisitRepository visitRepository;
     private final VisitMapper visitMapper;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
     private final ClinicRepository clinicRepository;
 
+    @Transactional
     public VisitDto createVisit(VisitCommand visitCommand) {
         if (!isTimeQuarterOfHour(visitCommand.getStartTime().getMinute())) {
             throw new IllegalArgumentException();
@@ -66,8 +64,10 @@ public class VisitService {
         return PageableDto.toPageable(visitDtos, visits);
     }
 
+    @Transactional
     public VisitDto assignPatient(Long patientId, Long visitId) {
-        Visit visit = visitRepository.findVisitById(visitId).getFirst();
+        Visit visit = visitRepository.findVisitById(visitId)
+                .orElseThrow(() -> new VisitNotFoundException("Visit not found", HttpStatus.NOT_FOUND));
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found", HttpStatus.NOT_FOUND));
         visit.setPatient(patient);

@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface VisitRepository extends JpaRepository<Visit, Long> {
-    List<Visit> findAll();
 
     @Query("SELECT v FROM Visit v WHERE v.startDate < :endDate AND v.endDate > :startDate AND v.doctor.id = :doctorId")
     List<Visit> findOverlappingVisits(
@@ -17,5 +17,5 @@ public interface VisitRepository extends JpaRepository<Visit, Long> {
             @Param("doctorId") Long doctorId
     );
 
-    List<Visit> findVisitById(Long id);
+    Optional<Visit> findVisitById(Long id);
 }
