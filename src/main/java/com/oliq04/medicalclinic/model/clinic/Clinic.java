@@ -3,15 +3,16 @@ package com.oliq04.medicalclinic.model.clinic;
 import com.oliq04.medicalclinic.model.doctor.Doctor;
 import com.oliq04.medicalclinic.model.visit.Visit;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import java.util.List;
 
 @Entity
 @NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode
 public class Clinic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
