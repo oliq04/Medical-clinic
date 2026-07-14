@@ -3,16 +3,14 @@ package com.oliq04.medicalclinic.model.user;
 import com.oliq04.medicalclinic.model.doctor.Doctor;
 import com.oliq04.medicalclinic.model.patient.entity.Patient;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @Entity
 @Getter
 @AllArgsConstructor
 @Setter
+@Builder
 @Table(name = "users")
 public class User {
     @Id

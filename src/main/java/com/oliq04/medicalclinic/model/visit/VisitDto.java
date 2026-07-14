@@ -3,16 +3,15 @@ package com.oliq04.medicalclinic.model.visit;
 import com.oliq04.medicalclinic.model.clinic.ClinicDto;
 import com.oliq04.medicalclinic.model.doctor.DoctorDto;
 import com.oliq04.medicalclinic.model.patient.dto.PatientDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class VisitDto {
     private Long id;
     private LocalDateTime startDate;

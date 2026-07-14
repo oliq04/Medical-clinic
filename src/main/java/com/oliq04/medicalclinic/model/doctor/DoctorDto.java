@@ -1,10 +1,7 @@
 package com.oliq04.medicalclinic.model.doctor;
 
 import com.oliq04.medicalclinic.model.clinic.ClinicDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -12,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@EqualsAndHashCode
 public class DoctorDto {
     private Long id;
     private String firstName;

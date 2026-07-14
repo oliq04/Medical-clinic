@@ -1,5 +1,7 @@
 package com.oliq04.medicalclinic.service;
 
+import com.oliq04.medicalclinic.exceptions.PatientAlreadyExistsException;
+import com.oliq04.medicalclinic.exceptions.PatientNotFoundException;
 import com.oliq04.medicalclinic.mapper.PatientMapper;
 import com.oliq04.medicalclinic.mapper.UserMapper;
 import com.oliq04.medicalclinic.model.PageableDto;
@@ -18,12 +20,16 @@ import org.mockito.Mockito;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class PatientServiceTest {
@@ -172,4 +178,72 @@ public class PatientServiceTest {
                 () -> assertEquals(LocalDateTime.of(2005, 3, 3, 5, 0), result.getBirthday())
         );
     }
+
+    @Test
+    void addPatient_PatientAlreadyExists_PatientAlreadyExistsExceptionThrown() {
+        //given
+        PatientCommand patientCommand = PatientCommand.builder()
+                .email("email")
+                .build();
+        when(repository.existsByUserEmail(any())).thenReturn(true);
+        //when
+        PatientAlreadyExistsException patientAlreadyExistsException = Assertions.assertThrows(
+                PatientAlreadyExistsException.class,
+                () -> service.addPatient(patientCommand));
+        //then
+        assertAll(
+                () -> assertEquals("Patient with given email already exists", patientAlreadyExistsException.getMessage()),
+                () -> assertEquals(409, patientAlreadyExistsException.getStatus().value())
+        );
+    }
+
+    @Test
+    void findByEmail_PatientNotFound_PatientNotFoundExceptionThrown() {
+        //given
+        when(repository.findPatientByUserEmail("email")).thenReturn(Optional.empty());
+        //when
+        PatientNotFoundException patientNotFoundException = Assertions.assertThrows(
+                PatientNotFoundException.class,
+                () -> service.findByEmail("email")
+        );
+        //then
+        assertAll(
+                () -> assertEquals("Patient not found", patientNotFoundException.getMessage()),
+                () -> assertEquals(404, patientNotFoundException.getStatus().value())
+        );
+    }
+
+    @Test
+    void removeByEmail_CorrectData_PatientRemoved() {
+        //given
+        Patient patient = Patient.builder()
+                .id(1L)
+                .idCardNo(2222L)
+                .firstName("Patient")
+                .lastName("Test")
+                .build();
+        when(repository.findPatientByUserEmail("email")).thenReturn(Optional.of(patient));
+        //when
+        service.removeByEmail("email");
+        //then
+        verify(repository).findPatientByUserEmail("email");
+        verify(repository).delete(patient);
+    }
+
+    @Test
+    void modifyPatient_PatientAlreadyExists_PatientNotFoundExceptionThrown() {
+        //given
+        when(repository.findPatientByUserEmail("email")).thenReturn(Optional.empty());
+        //when
+        PatientNotFoundException patientNotFoundException = Assertions.assertThrows(
+                PatientNotFoundException.class,
+                () -> service.findByEmail("email")
+        );
+        //then
+        assertAll(
+                () -> assertEquals("Patient not found", patientNotFoundException.getMessage()),
+                () -> assertEquals(404, patientNotFoundException.getStatus().value())
+        );
+    }
+
 }

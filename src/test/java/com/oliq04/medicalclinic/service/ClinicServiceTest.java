@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ClinicServiceTest {
@@ -152,5 +153,19 @@ public class ClinicServiceTest {
                 () -> assertEquals("22-33", result.getPostCode()),
                 () -> assertEquals("Polna 1", result.getAddress())
         );
+    }
+
+    @Test
+    void deleteClinic_CorrectData_ClinicRemoved() {
+        //given
+        Clinic clinic = Clinic.builder()
+                .id(1L)
+                .name("name")
+                .build();
+        when(repository.findByName("name")).thenReturn(Optional.of(clinic));
+        //when
+        service.deleteClinic("name");
+        //then
+        verify(repository).delete(clinic);
     }
 }

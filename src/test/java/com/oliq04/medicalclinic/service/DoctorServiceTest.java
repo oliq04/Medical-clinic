@@ -1,5 +1,8 @@
 package com.oliq04.medicalclinic.service;
 
+import com.oliq04.medicalclinic.exceptions.DoctorAlreadyAssignedException;
+import com.oliq04.medicalclinic.exceptions.DoctorNotFoundException;
+import com.oliq04.medicalclinic.exceptions.UserAlreadyExistsException;
 import com.oliq04.medicalclinic.mapper.ClinicMapper;
 import com.oliq04.medicalclinic.mapper.DoctorMapper;
 import com.oliq04.medicalclinic.mapper.UserMapper;
@@ -9,6 +12,7 @@ import com.oliq04.medicalclinic.model.clinic.ClinicDto;
 import com.oliq04.medicalclinic.model.doctor.Doctor;
 import com.oliq04.medicalclinic.model.doctor.DoctorCommand;
 import com.oliq04.medicalclinic.model.doctor.DoctorDto;
+import com.oliq04.medicalclinic.model.doctor.DoctorEditCommand;
 import com.oliq04.medicalclinic.model.specialization.Specialization;
 import com.oliq04.medicalclinic.model.user.User;
 import com.oliq04.medicalclinic.model.user.UserCommand;
@@ -29,8 +33,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.assertNull;
 
@@ -148,15 +154,180 @@ public class DoctorServiceTest {
         Pageable page = PageRequest.of(0, 2);
         List<Doctor> doctors = new ArrayList<>(List.of(doctor1, doctor2));
         PageImpl<Doctor> doctorPage = new PageImpl<>(doctors, page, doctors.size());
+        List<DoctorDto> doctorDtoList = doctorPage.stream()
+                .map(doctorMapper::toDtoFromEntity)
+                .toList();
+
         when(doctorRepository.findAll(page)).thenReturn(doctorPage);
         //when
         PageableDto<DoctorDto> result = doctorService.getDoctors(0, 2);
         //then
         Assertions.assertAll(
                 () -> assertEquals(1, result.getTotalPages()),
-                () -> assertEquals(2, result.getPageSize())
+                () -> assertEquals(2, result.getPageSize()),
+                () -> assertEquals(0, result.getCurrentPage()),
+                () -> assertEquals(2, result.getTotal()),
+                () -> assertEquals(doctorDtoList, result.getContent())
         );
     }
 
+    @Test
+    void getDoctor_CorrectData_SpecificDoctor() {
+        //given
+        String email = "email@wp.pl";
+        Doctor doctor1 = Doctor.builder()
+                .id(1L)
+                .firstName("Doctor")
+                .lastName("Oekter")
+                .specialization(Specialization.CARDIOLOGY)
+                .user(new User())
+                .visits(List.of(new Visit()))
+                .clinics(new ArrayList<>())
+                .build();
 
+        List<ClinicDto> clinicDto = doctor1.getClinics().stream()
+                .map(clinicMapper::toDtoFromEntity)
+                .toList();
+
+        when(doctorRepository.findByUserEmail(email)).thenReturn(Optional.of(doctor1));
+        //when
+        DoctorDto result = doctorService.getDoctor(email);
+        //then
+        Assertions.assertAll(
+                () -> assertEquals(1L, result.getId()),
+                () -> assertEquals("Doctor", result.getFirstName()),
+                () -> assertEquals("Oekter", result.getLastName()),
+                () -> assertEquals("CARDIOLOGY", result.getSpecialization()),
+                () -> assertEquals(clinicDto, result.getClinics())
+        );
+    }
+
+    @Test
+    void editDoctor_CorrectData_EditedDoctor() {
+        //given
+        String email = "email@wp.pl";
+        Doctor doctor = Doctor.builder()
+                .id(1L)
+                .firstName("Doctor")
+                .lastName("Oekter")
+                .specialization(Specialization.CARDIOLOGY)
+                .user(new User())
+                .visits(List.of(new Visit()))
+                .clinics(null)
+                .build();
+        DoctorEditCommand doctorEditCommand = DoctorEditCommand.builder()
+                .firstName("newName")
+                .lastName("newLastName")
+                .specialization(Specialization.GASTROLOGY.getSpecializationName())
+                .clinics(new ArrayList<>())
+                .build();
+
+        when(doctorRepository.findByUserEmail(email)).thenReturn(Optional.of(doctor));
+        when(doctorRepository.save(doctor)).thenReturn(doctor);
+        //when
+        DoctorDto result = doctorService.editDoctor(email, doctorEditCommand);
+
+        //then
+        Assertions.assertAll(
+                () -> assertEquals("newName", result.getFirstName()),
+                () -> assertEquals("newLastName", result.getLastName()),
+                () -> assertEquals("GASTROLOGY", result.getSpecialization()),
+                () -> assertEquals(0, result.getClinics().size())
+        );
+    }
+
+    @Test
+    void deleteDoctor_CorrectData_DoctorRemovedById() {
+        //given
+        Doctor doctor = Doctor.builder()
+                .id(1L)
+                .firstName("Doctor")
+                .lastName("Oekter")
+                .specialization(Specialization.CARDIOLOGY)
+                .user(new User())
+                .visits(List.of(new Visit()))
+                .clinics(new ArrayList<>())
+                .build();
+
+        when(doctorRepository.findByUserEmail("email")).thenReturn(Optional.of(doctor));
+        //when
+        doctorService.deleteDoctor("email");
+        //then
+        verify(doctorRepository).save(doctor);
+        verify(doctorRepository).deleteById(1L);
+    }
+
+    @Test
+    void assignToClinicByEmail_DoctorNotFound_DoctorNotFoundExceptionThrown() {
+        //given
+        when(doctorRepository.findByUserEmail("email")).thenReturn(Optional.empty());
+        //when
+        DoctorNotFoundException exception = Assertions.assertThrows(DoctorNotFoundException.class,
+                () -> doctorService.assignToClinicByEmail("email", "clinic1"));
+
+        //then
+        assertAll(
+                () -> assertEquals("Doctor with given email not found", exception.getMessage()),
+                () -> assertEquals(404, exception.getStatus().value())
+        );
+    }
+
+    @Test
+    void assignToClinicByEmail_DoctorAlreadyAssigned_DoctorAlreadyAssignedExceptionThrown() {
+        //given
+        Doctor doctor = Doctor.builder()
+                .id(1L)
+                .firstName("Doctor")
+                .lastName("Oekter")
+                .specialization(Specialization.CARDIOLOGY)
+                .user(new User())
+                .visits(List.of(new Visit()))
+                .clinics(new ArrayList<>())
+                .build();
+        when(doctorRepository.findByUserEmail("email")).thenReturn(Optional.of(doctor));
+        when(doctorRepository.existsByUserEmailAndClinicsName("email", "clinicName")).thenReturn(true);
+        //when
+        DoctorAlreadyAssignedException exception = Assertions.assertThrows(
+                DoctorAlreadyAssignedException.class,
+                () -> doctorService.assignToClinicByEmail("email", "clinicName"));
+
+        //then
+        assertAll(
+                () -> assertEquals("Doctor already assigned to this clinic", exception.getMessage()),
+                () -> assertEquals(409, exception.getStatus().value())
+        );
+    }
+
+    @Test
+    void addDoctor_UserAlreadyExists_UserAlreadyExistsExceptionThrown() {
+        DoctorCommand doctorCommand = DoctorCommand.builder()
+                .firstName("Doctor")
+                .lastName("DoctorCommand")
+                .email("email")
+                .build();
+        //given
+        when(userRepository.existsByEmail("email")).thenReturn(true);
+        //when
+        UserAlreadyExistsException exception = Assertions.assertThrows(UserAlreadyExistsException.class,
+                () -> doctorService.addDoctor(doctorCommand));
+
+        //then
+        assertAll(
+                () -> assertEquals("User with given email already exists", exception.getMessage()),
+                () -> assertEquals(409, exception.getStatus().value())
+        );
+    }
+
+    @Test
+    void getDoctor_DoctorDoesntExists_DoctorNotFoundExceptionThrown() {
+        when(doctorRepository.findByUserEmail("email")).thenReturn(Optional.empty());
+        //when
+        DoctorNotFoundException doctorNotFoundException = Assertions.assertThrows(
+                DoctorNotFoundException.class,
+                () -> doctorService.getDoctor("email"));
+        //then
+        assertAll(() -> assertEquals(404, doctorNotFoundException.getStatus().value()),
+                () -> assertEquals("Doctor with given email not found", doctorNotFoundException.getMessage())
+        );
+    }
 }
