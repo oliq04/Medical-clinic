@@ -1,5 +1,7 @@
 package com.oliq04.medicalclinic.service;
 
+import com.oliq04.medicalclinic.exceptions.DoctorNotFoundException;
+import com.oliq04.medicalclinic.exceptions.IllegalTimeException;
 import com.oliq04.medicalclinic.mapper.ClinicMapper;
 import com.oliq04.medicalclinic.mapper.DoctorMapper;
 import com.oliq04.medicalclinic.mapper.PatientMapper;
@@ -34,8 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -219,7 +220,7 @@ public class VisitServiceTest {
                 .phoneNumber("4444")
                 .build();
 
-        ClinicDto clinicDto = clinicMapper.toDtoFromEntity(clinic) ;
+        ClinicDto clinicDto = clinicMapper.toDtoFromEntity(clinic);
         DoctorDto doctorDto = doctorMapper.toDtoFromEntity(doctor);
         PatientDto patientDto = patientMapper.toDto(patient);
 
@@ -238,4 +239,48 @@ public class VisitServiceTest {
         );
     }
 
+    @Test
+    void createVisit_IncorrectMinutes_IllegalArgumentExceptionThrown() {
+        //given
+        VisitCommand visitCommand = VisitCommand
+                .builder()
+                .startTime(LocalDateTime.of(2026, 2, 4, 1, 31))
+                .endTime(LocalDateTime.of(2026, 2, 4, 1, 45))
+                .doctorEmail("doctoremail@wp.pl")
+                .patientEmail("patientemail@wp.pl")
+                .clinicName("Clinic1")
+                .build();
+
+        //when
+        IllegalTimeException exception = Assertions.assertThrows(IllegalTimeException.class,
+                () -> visitService.createVisit(visitCommand));
+
+        //then
+        assertAll(() -> assertEquals("Minutes must be quarters (00,15,30,45)", exception.getMessage()),
+                () -> assertEquals(400, exception.getStatus().value())
+        );
+    }
+
+    @Test
+    void createVisit_DoctorNotFound_DoctorNotFoundExceptionThrown() {
+        //given
+        VisitCommand visitCommand = VisitCommand
+                .builder()
+                .startTime(LocalDateTime.of(2026, 2, 4, 1, 30))
+                .endTime(LocalDateTime.of(2026, 2, 4, 1, 45))
+                .doctorEmail("doctoremail@wp.pl")
+                .patientEmail("patientemail@wp.pl")
+                .clinicName("Clinic1")
+                .build();
+
+        when(doctorRepository.findByUserEmail(visitCommand.getDoctorEmail())).thenReturn(Optional.empty());
+        //when
+        DoctorNotFoundException exception = Assertions.assertThrows(DoctorNotFoundException.class,
+                () -> visitService.createVisit(visitCommand));
+
+        //then
+        assertAll(() -> assertEquals("Doctor not found", exception.getMessage()),
+                () -> assertEquals(404, exception.getStatus().value())
+        );
+    }
 }

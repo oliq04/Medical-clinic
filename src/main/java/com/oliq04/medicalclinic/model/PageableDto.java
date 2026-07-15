@@ -1,9 +1,6 @@
 package com.oliq04.medicalclinic.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.domain.Page;
 import java.util.List;
 
@@ -11,6 +8,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
+@Builder
 public class PageableDto<T> {
     private int pageSize;
     private int currentPage;

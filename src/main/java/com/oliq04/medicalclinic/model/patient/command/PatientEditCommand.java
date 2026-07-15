@@ -4,16 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Setter
 @Getter
 @Builder
+@EqualsAndHashCode
 public class PatientEditCommand {
     @NotNull(message = "ID of card can't be null")
     @Positive(message = "Value of id card must be greater than 0")

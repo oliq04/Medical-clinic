@@ -1,6 +1,7 @@
 package com.oliq04.medicalclinic.model.patient.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @EqualsAndHashCode
+@Builder
 public class PatientDto {
     private Long id;
     private Long idCardNo;

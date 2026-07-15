@@ -1,14 +1,12 @@
 package com.oliq04.medicalclinic.model.clinic;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
+@Builder
 public class ClinicDto {
     private Long id;
     private String name;

@@ -63,12 +63,25 @@ public class ClinicServiceTest {
                 .doctors(List.of(Mockito.mock(Doctor.class)))
                 .visits(List.of(Mockito.mock(Visit.class)))
                 .build();
+        ClinicDto clinicDto1 = ClinicDto.builder()
+                .id(1L)
+                .name("Clinic1")
+                .town("Warsaw")
+                .postCode("22-33")
+                .address("Address")
+                .build();
+
+        ClinicDto clinicDto2 = ClinicDto.builder()
+                .id(2L)
+                .name("Clinic2")
+                .town("Wroclaw")
+                .postCode("333-33")
+                .address("Address")
+                .build();
 
         List<Clinic> clinics = new ArrayList<>(List.of(clinic1, clinic2));
         PageImpl<Clinic> clinicPage = new PageImpl<>(clinics, page, clinics.size());
-        List<ClinicDto> clinicDtos = clinics.stream()
-                .map(mapper::toDtoFromEntity)
-                .toList();
+        List<ClinicDto> clinicDtos = new ArrayList<>(List.of(clinicDto1, clinicDto2));
         when(repository.findAll(page)).thenReturn(clinicPage);
         //when
         PageableDto<ClinicDto> result = service.getClinics(0, 2);

@@ -35,7 +35,7 @@ public class VisitService {
     @Transactional
     public VisitDto createVisit(VisitCommand visitCommand) {
         if (!isTimeQuarterOfHour(visitCommand.getStartTime().getMinute())) {
-            throw new IllegalArgumentException();
+            throw new IllegalTimeException("Minutes must be quarters (00,15,30,45)", HttpStatus.BAD_REQUEST);
         }
 
         Doctor doctor = doctorRepository.findByUserEmail(visitCommand.getDoctorEmail())
