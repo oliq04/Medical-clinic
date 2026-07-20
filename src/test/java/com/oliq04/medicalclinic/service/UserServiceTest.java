@@ -38,7 +38,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void getUsers_CorrectData_PageOfUsers() {
+    void getUsers_CorrectData_PageOfUsersReturned() {
         //given
         int pageNumber = 0;
         int pageSize = 3;
@@ -77,7 +77,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void addUser_CorrectData_AddedUser() {
+    void addUser_CorrectData_AddedUserReturned() {
         //given
         UserCommand userCommand = UserCommand.builder()
                 .username("User")
@@ -96,7 +96,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void getUserByEmail_CorrectData_SpecificUser() {
+    void getUserByEmail_CorrectData_UserDtoReturned() {
         //given
         String email = "email@wp.pl";
         User user = User.builder()
@@ -119,7 +119,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void editUser_CorrectData_EditedUser() {
+    void editUser_CorrectData_EditedUserReturned() {
         //given
         String email = "email@wp.pl";
         UserCommand userCommand = UserCommand.builder()
@@ -150,7 +150,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void deleteUserByEmail_CorrectData_UserRemoved() {
+    void deleteUserByEmail_CorrectData_UserRemovedNoContent() {
         //given
         User user = User.builder()
                 .id(3L)

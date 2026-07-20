@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @EqualsAndHashCode
+@Builder
 public class DoctorDto {
     private Long id;
     private String firstName;

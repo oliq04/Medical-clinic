@@ -1,6 +1,5 @@
 package com.oliq04.medicalclinic.controller;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oliq04.medicalclinic.model.PageableDto;
 import com.oliq04.medicalclinic.model.patient.command.PatientCommand;
@@ -19,12 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,7 +37,7 @@ public class PatientControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void getByEmail_CorrectData_SpecificPatient() throws Exception {
+    void getByEmail_CorrectData_PatientReturned() throws Exception {
         //given
         PatientDto patientDto = PatientDto.builder()
                 .id(2L)
@@ -50,9 +46,8 @@ public class PatientControllerTest {
                 .lastName("Test")
                 .build();
         when(patientService.findByEmail("email@wp.pl")).thenReturn(patientDto);
-        //when
+        //when & then
 
-        //then
         mockMvc.perform(MockMvcRequestBuilders.get("/patients/{email}", "email@wp.pl"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Patient"))
@@ -96,7 +91,7 @@ public class PatientControllerTest {
     }
 
     @Test
-    void editPatient_CorrectData_EditedPatientDto() throws Exception {
+    void editPatient_CorrectData_EditedPatientDtoReturned() throws Exception {
         //given
         PatientEditCommand patientEditCommand = PatientEditCommand.builder()
                 .idCardNo(123L)
@@ -135,7 +130,7 @@ public class PatientControllerTest {
     }
 
     @Test
-    void getPatients_CorrectData_PageOfPatients() throws Exception {
+    void getPatients_CorrectData_PageOfPatientsReturned() throws Exception {
         //given
         PatientDto patientDto = PatientDto.builder()
                 .id(1L)

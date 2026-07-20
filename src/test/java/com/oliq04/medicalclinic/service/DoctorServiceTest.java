@@ -63,7 +63,7 @@ public class DoctorServiceTest {
     }
 
     @Test
-    void assignToClinicByEmail_CorrectData_DoctorAssigned() {
+    void assignToClinicByEmail_CorrectData_AssignedDoctorReturned() {
         //given
         Doctor doctor = Doctor.builder()
                 .id(1L)
@@ -96,13 +96,17 @@ public class DoctorServiceTest {
         //when
         DoctorDto result = doctorService.assignToClinicByEmail(email, clinicName);
         //then
+        ClinicDto clinicDtoResult = result.getClinics().getFirst();
         Assertions.assertAll(
-                () -> assertThat(result.getClinics().contains(clinicDto))
+                () -> assertEquals(1L, clinicDtoResult.getId()),
+                () -> assertEquals("Clinic1", clinicDtoResult.getName()),
+                () -> assertEquals("22-33", clinicDtoResult.getPostCode()),
+                () -> assertEquals("Address", clinicDtoResult.getAddress())
         );
     }
 
     @Test
-    void addDoctor_CorrectData_DoctorAdded() {
+    void addDoctor_CorrectData_AddedDoctorReturned() {
         //given
         DoctorCommand doctorCommand = DoctorCommand.builder()
                 .firstName("Doctor")
@@ -129,7 +133,7 @@ public class DoctorServiceTest {
     }
 
     @Test
-    void getDoctors_CorrectData_PageOfDoctors() {
+    void getDoctors_CorrectData_PageOfDoctorsReturned() {
         //given
         int pageNumber = 0;
         int pageSize = 2;
@@ -172,7 +176,7 @@ public class DoctorServiceTest {
     }
 
     @Test
-    void getDoctor_CorrectData_SpecificDoctor() {
+    void getDoctor_CorrectData_DoctorReturned() {
         //given
         String email = "email@wp.pl";
         Doctor doctor1 = Doctor.builder()
@@ -203,7 +207,7 @@ public class DoctorServiceTest {
     }
 
     @Test
-    void editDoctor_CorrectData_EditedDoctor() {
+    void editDoctor_CorrectData_EditedDoctorReturned() {
         //given
         String email = "email@wp.pl";
         Doctor doctor = Doctor.builder()
@@ -237,7 +241,7 @@ public class DoctorServiceTest {
     }
 
     @Test
-    void deleteDoctor_CorrectData_DoctorRemovedById() {
+    void deleteDoctor_CorrectData_DeletedDoctorNoContent() {
         //given
         Doctor doctor = Doctor.builder()
                 .id(1L)

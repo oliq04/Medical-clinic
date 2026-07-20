@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Builder
 public class VisitDto {
     private Long id;
     private LocalDateTime startDate;

@@ -50,7 +50,7 @@ public class PatientServiceTest {
     }
 
     @Test
-    void getPatients_GettingAllPatients_PageOfPatients() {
+    void getPatients_GettingAllPatients_PageOfPatientsReturned() {
         //given
         int pageNumber = 0;
         int pageSize = 2;
@@ -92,7 +92,7 @@ public class PatientServiceTest {
     }
 
     @Test
-    void addPatient_CorrectData_PatientCreated() {
+    void addPatient_CorrectData_CreatedPatientReturned() {
         //given
         PatientCommand patientCommand = PatientCommand.builder()
                 .email("email@gmail.com")
@@ -122,7 +122,7 @@ public class PatientServiceTest {
     }
 
     @Test
-    void findByEmail_CorrectData_UserFound() {
+    void findByEmail_CorrectData_UserReturned() {
         //given
         String email = "email@gmail.com";
         Patient patient = Patient.builder()
@@ -146,7 +146,7 @@ public class PatientServiceTest {
     }
 
     @Test
-    void modifyPatient_CorrectData_UserModified() {
+    void modifyPatient_CorrectData_ModifiedUserReturned() {
         //given
         String email = "email@gmail.com";
         Patient patient = Patient.builder()
@@ -214,7 +214,7 @@ public class PatientServiceTest {
     }
 
     @Test
-    void removeByEmail_CorrectData_PatientRemoved() {
+    void removeByEmail_CorrectData_PatientRemovedNoContent() {
         //given
         Patient patient = Patient.builder()
                 .id(1L)

@@ -39,7 +39,7 @@ public class ClinicServiceTest {
     }
 
     @Test
-    void getClinics_CorrectData_PageOfClinics() {
+    void getClinics_CorrectData_PageOfClinicsReturned() {
         //given
         int pageNumber = 0;
         int pageSize = 2;
@@ -97,7 +97,7 @@ public class ClinicServiceTest {
     }
 
     @Test
-    void getClinic_CorrectData_SpecificClinic() {
+    void getClinic_CorrectData_ClinicReturned() {
         //given
         String name = "Clinic1";
         Clinic clinic1 = Clinic.builder()
@@ -124,7 +124,7 @@ public class ClinicServiceTest {
     }
 
     @Test
-    void addClinic_CorrectData_ClinicAdded() {
+    void addClinic_CorrectData_AddedClinicReturned() {
         //given
         ClinicCommand clinicCommand = ClinicCommand.builder()
                 .name("Clinic1")
@@ -145,7 +145,7 @@ public class ClinicServiceTest {
     }
 
     @Test
-    void editClinic_CorrectData_ClinicEdited() {
+    void editClinic_CorrectData_EditedClinicReturned() {
         //given
         ClinicCommand clinicCommand = ClinicCommand.builder()
                 .name("Clinic1")
@@ -169,7 +169,7 @@ public class ClinicServiceTest {
     }
 
     @Test
-    void deleteClinic_CorrectData_ClinicRemoved() {
+    void deleteClinic_CorrectData_ClinicRemovedNoContent() {
         //given
         Clinic clinic = Clinic.builder()
                 .id(1L)

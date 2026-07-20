@@ -67,7 +67,7 @@ public class VisitServiceTest {
     }
 
     @Test
-    void createVisit_CorrectData_NewVisit() {
+    void createVisit_CorrectData_NewVisitReturned() {
         //given
         VisitCommand visitCommand = VisitCommand.builder()
                 .startTime(LocalDateTime.of(2026, 2, 4, 1, 30))
@@ -121,7 +121,7 @@ public class VisitServiceTest {
     }
 
     @Test
-    void getVisits_CorrectData_PageOfVisits() {
+    void getVisits_CorrectData_PageOfVisitsReturned() {
         int pageNumber = 0;
         int pageSize = 2;
         Doctor doctor = Doctor.builder()
@@ -178,7 +178,7 @@ public class VisitServiceTest {
     }
 
     @Test
-    void assignPatient_CorrectData_PatientAssignedToVisit() {
+    void assignPatient_CorrectData_PatientAssignedToVisitReturned() {
         //given
         Long patientId = 1L;
         Long visitId = 1L;
