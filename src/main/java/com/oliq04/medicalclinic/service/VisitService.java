@@ -6,6 +6,7 @@ import com.oliq04.medicalclinic.model.PageableDto;
 import com.oliq04.medicalclinic.model.clinic.Clinic;
 import com.oliq04.medicalclinic.model.doctor.Doctor;
 import com.oliq04.medicalclinic.model.patient.entity.Patient;
+import com.oliq04.medicalclinic.model.specialization.Specialization;
 import com.oliq04.medicalclinic.model.visit.Visit;
 import com.oliq04.medicalclinic.model.visit.VisitCommand;
 import com.oliq04.medicalclinic.model.visit.VisitDto;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -73,6 +76,36 @@ public class VisitService {
         visit.setPatient(patient);
         visitRepository.save(visit);
         return visitMapper.toDto(visit);
+    }
+
+    public PageableDto<VisitDto> getVisitsAssignedToPatient(Long patientId, int pageNumber, int visitsCount) {
+        PageRequest pageRequest = PageRequest.of(pageNumber, visitsCount);
+        Page<Visit> visits = visitRepository.findVisitsByPatientId(patientId, pageRequest);
+        List<VisitDto> visitDtoList = visits.stream()
+                .map(visitMapper::toDto)
+                .toList();
+        return PageableDto.toPageable(visitDtoList, visits);
+    }
+
+    public PageableDto<VisitDto> getAvailableVisitsAssignedToDoctor(Long doctorId, int pageNumber, int visitsCount) {
+        PageRequest pageRequest = PageRequest.of(pageNumber, visitsCount);
+        Page<Visit> visits = visitRepository.findVisitsByDoctorIdAndPatientIsNull(doctorId, pageRequest);
+        List<VisitDto> visitDtoList = visits.stream()
+                .map(visitMapper::toDto)
+                .toList();
+        return PageableDto.toPageable(visitDtoList, visits);
+    }
+
+    public PageableDto<VisitDto> getAvailableVisitsBySpecializationAndDate(int page, int size, LocalDate date, String specializationName) {
+        Specialization specialization = Specialization.valueOf(specializationName.toUpperCase());
+        PageRequest pageRequest = PageRequest.of(page, size);
+        LocalDateTime start = date.atStartOfDay();
+        LocalDateTime end = date.plusDays(1).atStartOfDay();
+        Page<Visit> visits = visitRepository.findVisitsByStartDateBetweenAndDoctorSpecializationAndPatientIsNull(start, end, specialization, pageRequest);
+        List<VisitDto> visitDtoList = visits.stream()
+                .map(visitMapper::toDto)
+                .toList();
+        return PageableDto.toPageable(visitDtoList, visits);
     }
 
     private boolean isTimeQuarterOfHour(int minute) {

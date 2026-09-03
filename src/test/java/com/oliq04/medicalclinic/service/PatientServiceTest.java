@@ -167,6 +167,7 @@ public class PatientServiceTest {
                 .build();
 
         when(repository.findPatientByUserEmail(email)).thenReturn(patientOptional);
+        when(repository.save(any())).thenReturn(patient);
         //when
         PatientDto result = service.modifyPatient(email, patientEditCommand);
         //then

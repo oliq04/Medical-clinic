@@ -82,7 +82,7 @@ public class PatientControllerTest {
         when(patientService.addPatient(any())).thenReturn(patientDto);
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+        mockMvc.perform(MockMvcRequestBuilders.post("/patients")
                         .content(objectMapper.writeValueAsString(patientCommand))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.idCardNo").value(333L))
