@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0
+      author: Oliwier Zyskowski
+      comment: Patient table
+      changes:
+        - createTable:
+            tableName: patient
+            columns:
+              - column:
+                  name: id
+                  type: bigint(255)
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: id_card_no
+                  type: bigint(255)
+              - column:
+                  name: first_name
+                  type: varchar(255)
+              - column:
+                  name: last_name
+                  type: varchar(255)
+              - column:
+                  name: phone_number
+                  type: varchar(12)
+              - column:
+                  name: birthday
+                  type: datetime
+              - column:
+                  name: user_id
+                  type: bigint(255)
+              - column:
+                  name: visit_id
+                  type: bigint(255)

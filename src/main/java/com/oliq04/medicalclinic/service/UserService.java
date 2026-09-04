@@ -52,7 +52,7 @@ public class UserService {
         if (userRepository.existsByEmail(email) && !userCommand.getEmail().equals(email)) {
             throw new UserAlreadyExistsException("User with given email already exists", HttpStatus.CONFLICT);
         }
-        User user = userRepository.findByEmail(userCommand.getEmail())
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found", HttpStatus.NOT_FOUND));
         user.update(userCommand);
         userRepository.save(user);
