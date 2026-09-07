@@ -61,7 +61,7 @@ public class DoctorControllerTest {
                 .totalPages(1)
                 .content(doctorDtoList)
                 .build();
-        when(doctorService.getDoctors(0, 1)).thenReturn(pageOfDoctors);
+        when(doctorService.getDoctors(0, 1, null)).thenReturn(pageOfDoctors);
         mockMvc.perform(MockMvcRequestBuilders.get("/doctors")
                         .param("page", "0")
                         .param("size", "1"))

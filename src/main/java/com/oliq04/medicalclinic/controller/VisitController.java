@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/visit")
@@ -101,20 +100,30 @@ public class VisitController {
         return visitService.getVisitsAssignedToPatient(id, page, size);
     }
 
-    @GetMapping("/doctor/{id}")
-    public PageableDto<VisitDto> visitsAssignedToDoctor(@PathVariable Long id, @RequestParam("page") int page,
-                                                        @RequestParam("size") int size) {
+    @GetMapping("/doctor/{id}/available")
+    public PageableDto<VisitDto> visitsAvailableAssignedToDoctor(@PathVariable Long id, @RequestParam("page") int page,
+                                                                 @RequestParam("size") int size) {
         return visitService.getAvailableVisitsAssignedToDoctor(id, page, size);
     }
 
     @GetMapping("/doctor")
     public PageableDto<VisitDto> visitsOfSpecializationAndDate(@RequestParam("page") int page,
                                                                @RequestParam("size") int size,
-                                                               @RequestParam("date") LocalDate date,
-                                                               @RequestParam("specialization") String specialization) {
+                                                               @RequestParam("from-date") LocalDate fromDate,
+                                                               @RequestParam(required = false, value = "to-date") LocalDate toDate,
+                                                               @RequestParam(required = false, value = "specialization") String specialization) {
 
-        return visitService.getAvailableVisitsBySpecializationAndDate(page,size,date,specialization);
+        return visitService.getAvailableVisitsBySpecializationAndDate(page, size, fromDate, toDate, specialization);
     }
 
+    @GetMapping("/doctor/{id}/all")
+    public PageableDto<VisitDto> visitsAssignedToDoctor(@PathVariable Long id, @RequestParam("page") int page,
+                                                        @RequestParam("size") int size) {
+        return visitService.getVisitsAssignedToDoctor(id, page, size);
+    }
 
+    @PatchMapping("/{id}")
+    public VisitDto cancelVisit(@PathVariable Long id) {
+        return visitService.cancelVisit(id);
+    }
 }

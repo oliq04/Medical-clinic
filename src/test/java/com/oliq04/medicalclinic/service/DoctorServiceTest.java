@@ -164,7 +164,7 @@ public class DoctorServiceTest {
 
         when(doctorRepository.findAll(page)).thenReturn(doctorPage);
         //when
-        PageableDto<DoctorDto> result = doctorService.getDoctors(0, 2);
+        PageableDto<DoctorDto> result = doctorService.getDoctors(0, 2, null);
         //then
         Assertions.assertAll(
                 () -> assertEquals(1, result.getTotalPages()),

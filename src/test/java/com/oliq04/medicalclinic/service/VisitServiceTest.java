@@ -283,4 +283,5 @@ public class VisitServiceTest {
                 () -> assertEquals(404, exception.getStatus().value())
         );
     }
+
 }
