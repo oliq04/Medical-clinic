@@ -1,26 +1,28 @@
 package com.oliq04.medicalclinic.service;
 
+import com.oliq04.medicalclinic.controller.search.SearchVisitParameters;
 import com.oliq04.medicalclinic.exceptions.*;
 import com.oliq04.medicalclinic.mapper.VisitMapper;
 import com.oliq04.medicalclinic.model.PageableDto;
 import com.oliq04.medicalclinic.model.clinic.Clinic;
 import com.oliq04.medicalclinic.model.doctor.Doctor;
 import com.oliq04.medicalclinic.model.patient.entity.Patient;
+import com.oliq04.medicalclinic.model.specialization.Specialization;
 import com.oliq04.medicalclinic.model.visit.Visit;
 import com.oliq04.medicalclinic.model.visit.VisitCommand;
 import com.oliq04.medicalclinic.model.visit.VisitDto;
-import com.oliq04.medicalclinic.repository.ClinicRepository;
-import com.oliq04.medicalclinic.repository.DoctorRepository;
-import com.oliq04.medicalclinic.repository.PatientRepository;
-import com.oliq04.medicalclinic.repository.VisitRepository;
+import com.oliq04.medicalclinic.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -35,7 +37,7 @@ public class VisitService {
     @Transactional
     public VisitDto createVisit(VisitCommand visitCommand) {
         if (!isTimeQuarterOfHour(visitCommand.getStartTime().getMinute())) {
-            throw new IllegalArgumentException();
+            throw new IllegalTimeException("Minutes must be quarters (00,15,30,45)", HttpStatus.BAD_REQUEST);
         }
 
         Doctor doctor = doctorRepository.findByUserEmail(visitCommand.getDoctorEmail())
@@ -77,5 +79,33 @@ public class VisitService {
 
     private boolean isTimeQuarterOfHour(int minute) {
         return minute % 15 == 0;
+    }
+
+    public VisitDto cancelVisit(Long id) {
+        Visit visit = visitRepository.findById(id).orElseThrow(() -> new VisitNotFoundException("Visit not found", HttpStatus.NOT_FOUND));
+        visit.setDoctor(null);
+        visit.setPatient(null);
+        Visit savedVisit = visitRepository.save(visit);
+        return visitMapper.toDto(savedVisit);
+    }
+
+    public PageableDto<VisitDto> searchedVisits(SearchVisitParameters searchVisitParameters) {
+        PageRequest pageRequest = PageRequest.of(searchVisitParameters.getPage(), searchVisitParameters.getSize());
+        Specialization specialization = null;
+        if (searchVisitParameters.getSpecialization() != null && !searchVisitParameters.getSpecialization().isBlank()) {
+            specialization = Specialization.valueOf(searchVisitParameters.getSpecialization().toUpperCase());
+        }
+        Specification<Visit> specification = Specification.allOf(
+                VisitSpecification.hasSpecialization(specialization),
+                VisitSpecification.startDateBetween(searchVisitParameters.getFrom(), searchVisitParameters.getTo()),
+                VisitSpecification.availableOnly(searchVisitParameters.getAvailableOnly()),
+                VisitSpecification.hasPatientId(searchVisitParameters.getPatientId()),
+                VisitSpecification.hasDoctorId(searchVisitParameters.getDoctorId())
+        );
+        Page<Visit> visitsPage = visitRepository.findAll(specification, pageRequest);
+        List<VisitDto> visits = visitsPage.stream()
+                .map(visitMapper::toDto)
+                .toList();
+        return PageableDto.toPageable(visits, visitsPage);
     }
 }

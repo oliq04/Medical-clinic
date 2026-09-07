@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Oliwier Zyskowski
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint(255)
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: username
+                  type: varchar(63)
+              - column:
+                  name: password
+                  type: varchar(25)
+              - column:
+                  name: email
+                  type: varchar(255)
+              - column:
+                  name: patient_id
+                  type: bigint(255)
+              - column:
+                  name: doctor_id
+                  type: bigint(255)
+        - addForeignKeyConstraint:
+            baseTableName: patient
+            baseColumnNames: user_id
+            constraintName: fk_patient_user_id
+            referencedColumnNames: id
+            referencedTableName: users

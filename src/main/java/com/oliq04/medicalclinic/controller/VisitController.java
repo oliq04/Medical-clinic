@@ -1,5 +1,6 @@
 package com.oliq04.medicalclinic.controller;
 
+import com.oliq04.medicalclinic.controller.search.SearchVisitParameters;
 import com.oliq04.medicalclinic.exceptions.ErrorMessage;
 import com.oliq04.medicalclinic.model.PageableDto;
 import com.oliq04.medicalclinic.model.patient.command.PatientEditCommand;
@@ -16,6 +17,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/visit")
@@ -87,8 +90,19 @@ public class VisitController {
     })
     @PostMapping("/patient")
     public VisitDto assignPatient(@Parameter(description = "Id of patient to assign to visit")
-                                  @RequestParam("patientId") Long patientId,
-                                  @Parameter(description = "Id of visit") @RequestParam("visitId") Long visitId) {
+                                  @RequestParam("patient-id") Long patientId,
+                                  @Parameter(description = "Id of visit") @RequestParam("visit-id") Long visitId) {
         return visitService.assignPatient(patientId, visitId);
+    }
+
+    @DeleteMapping("/{id}")
+    public VisitDto cancelVisit(@PathVariable Long id) {
+        return visitService.cancelVisit(id);
+    }
+
+    //zaawansowany
+    @GetMapping("/search")
+    public PageableDto<VisitDto> visitsSearch(SearchVisitParameters searchVisitParameters) {
+        return visitService.searchedVisits(searchVisitParameters);
     }
 }

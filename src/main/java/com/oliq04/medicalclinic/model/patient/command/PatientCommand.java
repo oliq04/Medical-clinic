@@ -2,6 +2,7 @@ package com.oliq04.medicalclinic.model.patient.command;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class PatientCommand {
     @Email(message = "Invalid email pattern")
     @NotBlank(message = "Email can't be empty")

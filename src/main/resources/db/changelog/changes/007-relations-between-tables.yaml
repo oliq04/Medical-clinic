@@ -1,0 +1,83 @@
+databaseChangeLog:
+  - changeSet:
+      id: 6
+      author: Oliwier Zyskowski
+      changes:
+        - addNotNullConstraint:
+            tableName: doctor_clinic
+            columnName: doctor_id
+            columnDataType: bigint
+
+        - addNotNullConstraint:
+            tableName: doctor_clinic
+            columnName: clinic_id
+            columnDataType: bigint
+
+        - addPrimaryKey:
+            tableName: doctor_clinic
+            columnNames: doctor_id, clinic_id
+            constraintName: pk_doctor_clinic
+
+        - addForeignKeyConstraint:
+            baseTableName: doctor_clinic
+            baseColumnNames: clinic_id
+            constraintName: fk_doctor_clinic__id
+            referencedColumnNames: id
+            referencedTableName: clinic
+
+        - addForeignKeyConstraint:
+            baseTableName: doctor_clinic
+            baseColumnNames: doctor_id
+            constraintName: fk_doctor_clinic___id
+            referencedColumnNames: id
+            referencedTableName: doctor
+
+        - addForeignKeyConstraint:
+            baseTableName: doctor
+            baseColumnNames: visit_id
+            constraintName: fk_doctor_visit_id
+            referencedColumnNames: id
+            referencedTableName: visit
+        - addForeignKeyConstraint:
+            baseTableName: doctor
+            baseColumnNames: user_id
+            constraintName: fk_doctor_user_id
+            referencedColumnNames: id
+            referencedTableName: users
+
+        - addForeignKeyConstraint:
+            baseTableName: clinic
+            baseColumnNames: visit_id
+            constraintName: fk_clinic_visit_id
+            referencedColumnNames: id
+            referencedTableName: visit
+        - addForeignKeyConstraint:
+            baseTableName: visit
+            baseColumnNames: doctor_id
+            constraintName: fk_visit_doctor_id
+            referencedColumnNames: id
+            referencedTableName: doctor
+        - addForeignKeyConstraint:
+            baseTableName: visit
+            baseColumnNames: clinic_id
+            constraintName: fk_clinic_doctor_id
+            referencedColumnNames: id
+            referencedTableName: clinic
+        - addForeignKeyConstraint:
+            baseTableName: visit
+            baseColumnNames: patient_id
+            constraintName: fk_patient_doctor_id
+            referencedColumnNames: id
+            referencedTableName: patient
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: patient_id
+            constraintName: fk_user_patient_id
+            referencedColumnNames: id
+            referencedTableName: patient
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: doctor_id
+            constraintName: fk_user_doctor_id
+            referencedColumnNames: id
+            referencedTableName: doctor

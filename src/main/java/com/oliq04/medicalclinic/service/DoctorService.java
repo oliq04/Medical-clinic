@@ -63,12 +63,18 @@ public class DoctorService {
         return doctorMapper.toDtoFromEntity(doctorRepository.save(doctor));
     }
 
-    public PageableDto<DoctorDto> getDoctors(int pageNumber, int doctorsCount) {
+    public PageableDto<DoctorDto> getDoctors(int pageNumber, int doctorsCount, String specializationName) {
         Pageable page = PageRequest.of(pageNumber, doctorsCount);
-        Page<Doctor> doctorPage = doctorRepository.findAll(page);
+
+        Page<Doctor> doctorPage = (specializationName != null && !specializationName.isBlank())
+                ? doctorRepository.findBySpecialization(
+                Specialization.valueOf(specializationName.toUpperCase()), page)
+                : doctorRepository.findAll(page);
+
         List<DoctorDto> doctorDtoList = doctorPage.stream()
                 .map(doctorMapper::toDtoFromEntity)
                 .toList();
+
         return PageableDto.toPageable(doctorDtoList, doctorPage);
     }
 
