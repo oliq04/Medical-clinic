@@ -1,5 +1,6 @@
 package com.oliq04.medicalclinic.service;
 
+import com.oliq04.medicalclinic.controller.search.SearchVisitParameters;
 import com.oliq04.medicalclinic.exceptions.*;
 import com.oliq04.medicalclinic.mapper.VisitMapper;
 import com.oliq04.medicalclinic.model.PageableDto;
@@ -76,59 +77,8 @@ public class VisitService {
         return visitMapper.toDto(visit);
     }
 
-    public PageableDto<VisitDto> getVisitsAssignedToPatient(Long patientId, int pageNumber, int visitsCount) {
-        PageRequest pageRequest = PageRequest.of(pageNumber, visitsCount);
-        Page<Visit> visits = visitRepository.findVisitsByPatientId(patientId, pageRequest);
-        List<VisitDto> visitDtoList = visits.stream()
-                .map(visitMapper::toDto)
-                .toList();
-        return PageableDto.toPageable(visitDtoList, visits);
-    }
-
-    public PageableDto<VisitDto> getVisitsAssignedToDoctor(Long doctorId, int pageNumber, int visitsCount) {
-        PageRequest pageRequest = PageRequest.of(pageNumber, visitsCount);
-        Page<Visit> visits = visitRepository.findVisitsByDoctorId(doctorId, pageRequest);
-        List<VisitDto> visitDtoList = visits.stream()
-                .map(visitMapper::toDto)
-                .toList();
-        return PageableDto.toPageable(visitDtoList, visits);
-    }
-
-    public PageableDto<VisitDto> getAvailableVisitsBySpecializationAndDate(int page, int size, LocalDate fromDate, LocalDate toDate, String specializationName) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Specialization specialization = null;
-
-        if (specializationName != null && !specializationName.isBlank()) {
-            specialization = Specialization.valueOf(specializationName.toUpperCase());
-        }
-
-        if (toDate == null) {
-            toDate = fromDate;
-        }
-
-        Specification<Visit> specification = Specification.allOf(
-                VisitSpecification.hasNoPatient(),
-                VisitSpecification.startDateBetween(fromDate, toDate.plusDays(1)),
-                VisitSpecification.hasSpecialization(specialization)
-        );
-        Page<Visit> visits = visitRepository.findAll(specification, pageRequest);
-        List<VisitDto> visitDtoList = visits.stream()
-                .map(visitMapper::toDto)
-                .toList();
-        return PageableDto.toPageable(visitDtoList, visits);
-    }
-
     private boolean isTimeQuarterOfHour(int minute) {
         return minute % 15 == 0;
-    }
-
-    public PageableDto<VisitDto> getAvailableVisitsAssignedToDoctor(Long id, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Visit> visits = visitRepository.findVisitsByDoctorIdAndPatientIsNull(id, pageRequest);
-        List<VisitDto> visitDtoList = visits.stream()
-                .map(visitMapper::toDto)
-                .toList();
-        return PageableDto.toPageable(visitDtoList, visits);
     }
 
     public VisitDto cancelVisit(Long id) {
@@ -137,5 +87,25 @@ public class VisitService {
         visit.setPatient(null);
         Visit savedVisit = visitRepository.save(visit);
         return visitMapper.toDto(savedVisit);
+    }
+
+    public PageableDto<VisitDto> searchedVisits(SearchVisitParameters searchVisitParameters) {
+        PageRequest pageRequest = PageRequest.of(searchVisitParameters.getPage(), searchVisitParameters.getSize());
+        Specialization specialization = null;
+        if (searchVisitParameters.getSpecialization() != null && !searchVisitParameters.getSpecialization().isBlank()) {
+            specialization = Specialization.valueOf(searchVisitParameters.getSpecialization().toUpperCase());
+        }
+        Specification<Visit> specification = Specification.allOf(
+                VisitSpecification.hasSpecialization(specialization),
+                VisitSpecification.startDateBetween(searchVisitParameters.getFrom(), searchVisitParameters.getTo()),
+                VisitSpecification.availableOnly(searchVisitParameters.getAvailableOnly()),
+                VisitSpecification.hasPatientId(searchVisitParameters.getPatientId()),
+                VisitSpecification.hasDoctorId(searchVisitParameters.getDoctorId())
+        );
+        Page<Visit> visitsPage = visitRepository.findAll(specification, pageRequest);
+        List<VisitDto> visits = visitsPage.stream()
+                .map(visitMapper::toDto)
+                .toList();
+        return PageableDto.toPageable(visits, visitsPage);
     }
 }

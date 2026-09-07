@@ -114,8 +114,8 @@ public class VisitControllerTest {
         when(visitService.assignPatient(1L,1L)).thenReturn(visitDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/visit/patient")
-                .param("patientId", "1")
-                .param("visitId", "1"))
+                .param("patient-id", "1")
+                .param("visit-id", "1"))
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.startDate").value("2027-05-05T02:00:00"))
                 .andExpect(jsonPath("$.endDate").value("2027-05-05T02:15:00"))

@@ -1,5 +1,6 @@
 package com.oliq04.medicalclinic.controller;
 
+import com.oliq04.medicalclinic.controller.search.SearchVisitParameters;
 import com.oliq04.medicalclinic.exceptions.ErrorMessage;
 import com.oliq04.medicalclinic.model.PageableDto;
 import com.oliq04.medicalclinic.model.patient.command.PatientEditCommand;
@@ -89,41 +90,19 @@ public class VisitController {
     })
     @PostMapping("/patient")
     public VisitDto assignPatient(@Parameter(description = "Id of patient to assign to visit")
-                                  @RequestParam("patientId") Long patientId,
-                                  @Parameter(description = "Id of visit") @RequestParam("visitId") Long visitId) {
+                                  @RequestParam("patient-id") Long patientId,
+                                  @Parameter(description = "Id of visit") @RequestParam("visit-id") Long visitId) {
         return visitService.assignPatient(patientId, visitId);
     }
 
-    @GetMapping("/patient/{id}")
-    public PageableDto<VisitDto> visitsAssignedToPatient(@PathVariable Long id, @RequestParam("page") int page,
-                                                         @RequestParam("size") int size) {
-        return visitService.getVisitsAssignedToPatient(id, page, size);
-    }
-
-    @GetMapping("/doctor/{id}/available")
-    public PageableDto<VisitDto> visitsAvailableAssignedToDoctor(@PathVariable Long id, @RequestParam("page") int page,
-                                                                 @RequestParam("size") int size) {
-        return visitService.getAvailableVisitsAssignedToDoctor(id, page, size);
-    }
-
-    @GetMapping("/doctor")
-    public PageableDto<VisitDto> visitsOfSpecializationAndDate(@RequestParam("page") int page,
-                                                               @RequestParam("size") int size,
-                                                               @RequestParam("from-date") LocalDate fromDate,
-                                                               @RequestParam(required = false, value = "to-date") LocalDate toDate,
-                                                               @RequestParam(required = false, value = "specialization") String specialization) {
-
-        return visitService.getAvailableVisitsBySpecializationAndDate(page, size, fromDate, toDate, specialization);
-    }
-
-    @GetMapping("/doctor/{id}/all")
-    public PageableDto<VisitDto> visitsAssignedToDoctor(@PathVariable Long id, @RequestParam("page") int page,
-                                                        @RequestParam("size") int size) {
-        return visitService.getVisitsAssignedToDoctor(id, page, size);
-    }
-
-    @PatchMapping("/{id}")
+    @DeleteMapping("/{id}")
     public VisitDto cancelVisit(@PathVariable Long id) {
         return visitService.cancelVisit(id);
+    }
+
+    //zaawansowany
+    @GetMapping("/search")
+    public PageableDto<VisitDto> visitsSearch(SearchVisitParameters searchVisitParameters) {
+        return visitService.searchedVisits(searchVisitParameters);
     }
 }
