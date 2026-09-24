@@ -3,10 +3,7 @@ package com.oliq04.medicalclinic.model.patient.entity;
 import com.oliq04.medicalclinic.model.patient.command.PatientEditCommand;
 import com.oliq04.medicalclinic.model.visit.Visit;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import com.oliq04.medicalclinic.model.user.User;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
+@EqualsAndHashCode
 public class Patient {
 
     @Id

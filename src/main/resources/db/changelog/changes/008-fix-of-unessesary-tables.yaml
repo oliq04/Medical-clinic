@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 7
+      author: Oliwier Zyskowski
+      changes:
+        - dropColumn:
+            tableName: doctor
+            columns:
+              - column:
+                  name: clinic_id
+              - column:
+                  name: visit_id
+
+        - dropColumn:
+            tableName: patient
+            columns:
+              - column:
+                  name: visit_id
+
+        - dropColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: patient_id
+              - column:
+                  name: doctor_id
+
+        - dropColumn:
+            tableName: clinic
+            columns:
+              - column:
+                  name: visit_id
+              - column:
+                  name: doctor_id

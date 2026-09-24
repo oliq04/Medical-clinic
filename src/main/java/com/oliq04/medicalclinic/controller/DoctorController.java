@@ -35,8 +35,9 @@ public class DoctorController {
     })
     @GetMapping
     public PageableDto<DoctorDto> getDoctors(@Parameter(description = "Page number") @RequestParam("page") int page,
-                                             @Parameter(description = "Page size") @RequestParam("size") int size) {
-        return doctorService.getDoctors(page, size);
+                                             @Parameter(description = "Page size") @RequestParam("size") int size,
+                                             @RequestParam(value = "specialization", required = false) String specialization) {
+        return doctorService.getDoctors(page, size, specialization);
     }
 
     @Operation(summary = "Get doctor by given email")

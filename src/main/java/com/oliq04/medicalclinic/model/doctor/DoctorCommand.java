@@ -2,15 +2,13 @@ package com.oliq04.medicalclinic.model.doctor;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
 public class DoctorCommand {
     @NotBlank(message = "Name can't be blank")
     private String firstName;

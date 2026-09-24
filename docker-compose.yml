@@ -1,0 +1,14 @@
+networks:
+  elk-network:
+    external: true
+
+services:
+  medicalclinic:
+    image: medical-clinic:4.4
+    container_name: medical-clinic-app
+    ports:
+      - '8555:8080'
+    networks:
+      - elk-network
+    environment:
+      - LOGSTASH_HOST=logstash
