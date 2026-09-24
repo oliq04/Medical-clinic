@@ -1,14 +1,15 @@
 package com.oliq04.medicalclinic.service;
 
 import com.oliq04.medicalclinic.model.Clinic;
+import com.oliq04.medicalclinic.model.DomainPageRequest;
+import com.oliq04.medicalclinic.model.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ClinicRepositoryProvider {
-    List<Clinic> findAll();
+    Pageable<Clinic> findAll(DomainPageRequest domainPageRequest);
 
-    Optional<Object> findByName(String name);
+    Optional<Clinic> findByName(String name);
 
     Clinic save(Clinic clinic);
 

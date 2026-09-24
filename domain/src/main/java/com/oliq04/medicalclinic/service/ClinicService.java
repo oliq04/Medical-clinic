@@ -1,11 +1,12 @@
 package com.oliq04.medicalclinic.service;
 
 import com.oliq04.medicalclinic.model.Clinic;
+import com.oliq04.medicalclinic.model.DomainPageRequest;
+import com.oliq04.medicalclinic.model.Pageable;
 import com.oliq04.medicalclinic.model.exceptions.ClinicAlreadyExistsException;
 import com.oliq04.medicalclinic.model.exceptions.ClinicNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -13,8 +14,9 @@ public class ClinicService {
 
     private final ClinicRepositoryProvider clinicRepository;
 
-    public List<Clinic> getClinics(int pageNumber, int clinicsCount) {
-        return clinicRepository.findAll();
+    public Pageable<Clinic> getClinics(int page, int size) {
+        DomainPageRequest pageRequest = new DomainPageRequest(page,size);
+        return clinicRepository.findAll(pageRequest);
     }
 
     public Clinic getClinic(String name) {

@@ -9,7 +9,6 @@ import java.util.List;
 @Setter
 public class Doctor {
 
-
     private Long id;
     private String firstName;
     private String lastName;

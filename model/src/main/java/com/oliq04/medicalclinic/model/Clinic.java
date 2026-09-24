@@ -10,7 +10,6 @@ import java.util.List;
 public class Clinic {
 
     private Long id;
-
     private String name;
     private String town;
     private String postCode;
