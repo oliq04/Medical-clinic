@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: Oliwier Zyskowski
+      comment: Create visit
+      changes:
+        - createTable:
+            tableName: visit
+            columns:
+              - column:
+                  name: id
+                  type: bigint(255)
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: start_date
+                  type: datetime
+              - column:
+                  name: end_date
+                  type: datetime
+              - column:
+                  name: patient_id
+                  type: bigint(255)
+              - column:
+                  name: doctor_id
+                  type: bigint(255)
+              - column:
+                  name: clinic_id
+                  type: bigint(255)
