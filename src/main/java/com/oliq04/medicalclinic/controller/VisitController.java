@@ -17,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @RestController
 @RequestMapping("/visit")
 @RequiredArgsConstructor
@@ -91,4 +94,27 @@ public class VisitController {
                                   @Parameter(description = "Id of visit") @RequestParam("visitId") Long visitId) {
         return visitService.assignPatient(patientId, visitId);
     }
+
+    @GetMapping("/patient/{id}")
+    public PageableDto<VisitDto> visitsAssignedToPatient(@PathVariable Long id, @RequestParam("page") int page,
+                                                         @RequestParam("size") int size) {
+        return visitService.getVisitsAssignedToPatient(id, page, size);
+    }
+
+    @GetMapping("/doctor/{id}")
+    public PageableDto<VisitDto> visitsAssignedToDoctor(@PathVariable Long id, @RequestParam("page") int page,
+                                                        @RequestParam("size") int size) {
+        return visitService.getAvailableVisitsAssignedToDoctor(id, page, size);
+    }
+
+    @GetMapping("/doctor")
+    public PageableDto<VisitDto> visitsOfSpecializationAndDate(@RequestParam("page") int page,
+                                                               @RequestParam("size") int size,
+                                                               @RequestParam("date") LocalDate date,
+                                                               @RequestParam("specialization") String specialization) {
+
+        return visitService.getAvailableVisitsBySpecializationAndDate(page,size,date,specialization);
+    }
+
+
 }

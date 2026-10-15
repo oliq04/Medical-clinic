@@ -11,7 +11,6 @@ public interface ClinicMapper {
 
     @Mapping(target = "doctors", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "update", ignore = true)
     Clinic toEntityFromCommand(ClinicCommand clinicCommand);
 
     ClinicDto toDtoFromEntity(Clinic clinic);

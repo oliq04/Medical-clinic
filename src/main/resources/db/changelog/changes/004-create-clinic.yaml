@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: Oliwier Zyskowski
+      comment: Create clinic
+      changes:
+        - createTable:
+            tableName: clinic
+            columns:
+              - column:
+                  name: id
+                  type: bigint(255)
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: town
+                  type: varchar(255)
+              - column:
+                  name: post_code
+                  type: varchar(30)
+              - column:
+                  name: address
+                  type: varchar(255)
+              - column:
+                  name: doctor_id
+                  type: bigint(255)
+              - column:
+                  name: visit_id
+                  type: bigint(255)

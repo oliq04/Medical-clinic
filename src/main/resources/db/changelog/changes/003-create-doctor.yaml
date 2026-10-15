@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: Oliwier Zyskowski
+      comment: Create doctor
+      changes:
+        - createTable:
+            tableName: doctor
+            columns:
+              - column:
+                  name: id
+                  type: bigint(255)
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: first_name
+                  type: varchar(255)
+              - column:
+                  name: last_name
+                  type: varchar(255)
+              - column:
+                  name: specialization
+                  type: varchar(30)
+              - column:
+                  name: user_id
+                  type: bigint(255)
+              - column:
+                  name: clinic_id
+                  type: bigint(255)
+              - column:
+                  name: visit_id
+                  type: bigint(255)

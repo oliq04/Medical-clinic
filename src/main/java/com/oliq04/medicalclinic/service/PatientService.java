@@ -67,13 +67,12 @@ public class PatientService {
     public PatientDto modifyPatient(String email, PatientEditCommand newPatientInfo) {
         Patient patient = findByUserEmailOrThrowNotFoundException(email, "Patient not found", HttpStatus.NOT_FOUND);
         patient.update(newPatientInfo);
-        patientRepository.save(patient);
-        return patientMapper.toDto(patient);
+        Patient savedPatient = patientRepository.save(patient);
+        return patientMapper.toDto(savedPatient);
     }
 
     private Patient findByUserEmailOrThrowNotFoundException(String email, String message, HttpStatus status) {
         return patientRepository.findPatientByUserEmail(email)
                 .orElseThrow(() -> new PatientNotFoundException(message, status));
     }
-
 }

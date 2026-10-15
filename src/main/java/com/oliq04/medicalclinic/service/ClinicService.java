@@ -10,6 +10,7 @@ import com.oliq04.medicalclinic.model.clinic.ClinicDto;
 import com.oliq04.medicalclinic.repository.ClinicRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClinicService {
 
     private final ClinicRepository clinicRepository;
@@ -46,6 +48,7 @@ public class ClinicService {
     @Transactional
     public ClinicDto addClinic(ClinicCommand clinicCommand) {
         Clinic clinic = clinicMapper.toEntityFromCommand(clinicCommand);
+        log.info("Saving clinic to database.");
         return clinicMapper.toDtoFromEntity(clinicRepository.save(clinic));
     }
 

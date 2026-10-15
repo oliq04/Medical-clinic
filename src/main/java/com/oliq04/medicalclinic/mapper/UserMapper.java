@@ -15,13 +15,11 @@ public interface UserMapper {
     @Mapping(target = "patient", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "doctor", ignore = true)
-    @Mapping(target = "update", ignore = true)
     User toEntityFromCommand(UserCommand userCommand);
 
     @Mapping(target = "patient", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "doctor", ignore = true)
-    @Mapping(target = "update", ignore = true)
     @Mapping(target = "username", source = "patientCommand.email")
     User toEntityFromPatientCommand(PatientCommand patientCommand);
 

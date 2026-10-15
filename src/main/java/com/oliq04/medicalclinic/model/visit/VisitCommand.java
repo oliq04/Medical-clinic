@@ -4,20 +4,19 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
+@Builder
 public class VisitCommand {
     @Future(message = "Start date of visit must be from future")
     private LocalDateTime startTime;
-    @Past(message = "End date of visit can't be from past")
+    @Future(message = "End date of visit can't be from past")
     private LocalDateTime endTime;
     @Email(message = "Invalid email")
     @NotBlank(message = "Email can't be blank")

@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: Oliwier Zyskowski
+      changes:
+        - createTable:
+            tableName: doctor_clinic
+            columns:
+              - column:
+                  name: doctor_id
+                  type: bigint(255)
+              - column:
+                  name: clinic_id
+                  type: bigint(255)
